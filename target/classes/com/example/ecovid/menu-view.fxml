@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.paint.Color?>
+<?import javafx.scene.paint.RadialGradient?>
+<?import javafx.scene.paint.Stop?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.ecovid.MenuController">
+   <children>
+      <Label layoutX="237.0" layoutY="24.0" text="ECovid">
+         <font>
+            <Font name="Microsoft PhagsPa Bold" size="39.0" />
+         </font>
+         <textFill>
+            <RadialGradient centerX="0.5" centerY="0.5" radius="0.5">
+               <stops>
+                  <Stop>
+                     <color>
+                        <Color red="0.28514862060546875" green="0.027595030143857002" blue="0.9934210777282715" />
+                     </color>
+                  </Stop>
+                  <Stop offset="1.0">
+                     <color>
+                        <Color red="0.2750771641731262" green="0.19328702986240387" blue="0.5" />
+                     </color>
+                  </Stop>
+               </stops>
+            </RadialGradient>
+         </textFill>
+      </Label>
+      <Label layoutX="150.0" layoutY="81.0" text="So, how do you wanna plan your trip?">
+         <font>
+            <Font size="18.0" />
+         </font>
+      </Label>
+      <Button layoutX="51.0" layoutY="139.0" mnemonicParsing="false" text="safest countries" />
+      <Button layoutX="51.0" layoutY="175.0" mnemonicParsing="false" text="wealthiest countries" />
+      <TextField fx:id="nameTextField" layoutX="244.0" layoutY="150.0" />
+      <Button fx:id="okButton" layoutX="293.0" layoutY="200.0" mnemonicParsing="false" onAction="#button" text="Button" />
+   </children>
+</AnchorPane>
