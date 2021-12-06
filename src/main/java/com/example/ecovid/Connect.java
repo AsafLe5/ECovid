@@ -1,6 +1,10 @@
 package com.example.ecovid;
 //package DB;
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 
 public class Connect {
@@ -48,30 +52,38 @@ public class Connect {
 
 
     }
-    public void callSQL(String query) {
-        System.out.println("heey1");
+    public Map<Integer, List> callSQL(String query) {
+
+        List<String> country = new ArrayList<>();
+        List<Integer> id = new ArrayList<>();
+        List<Integer> total = new ArrayList<>();
+        List<Integer> gdp = new ArrayList<>();
         try (Statement stmt = conn.createStatement(); ResultSet rs = stmt.executeQuery(query)) {
-            System.out.println("heey2");
+
+
             while (rs.next() == true) {
 
                 /*System.out.print(rs.getInt("country_id"));
                 System.out.print("\t");
                 System.out.print(rs.getInt("daily_vaccinations"));
                 System.out.println();*/
-                System.out.print(rs.getString("country"));
-                System.out.print("\t");
-                System.out.print(rs.getInt("country_id"));
-                System.out.print("\t");
-                System.out.print(rs.getInt("totalCases"));
-                System.out.print("\t");
-                System.out.print(rs.getInt("gdp_usd_per_cap"));
-                System.out.print("\t");
+                country.add(rs.getString("country"));
+                id.add(rs.getInt("country_id"));
+                total.add(rs.getInt("totalCases"));
+                gdp.add(rs.getInt("gdp_usd_per_cap"));
                 System.out.println();
 
             }
         } catch (SQLException e) {
             System.out.println("ERROR executeQuery - " + e.getMessage());
         }
+        Map<Integer, List> ret = new HashMap<Integer, List>();
+        ret.put(0, country);
+        ret.put(1, id);
+        ret.put(2, total);
+        ret.put(3, gdp);
+        return ret;
+
     }
 /*
 SELECT * FROM corona_data.country_vaccinations

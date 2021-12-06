@@ -12,6 +12,9 @@ import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 public class MenuController extends Application {
     @FXML
@@ -48,6 +51,14 @@ public class MenuController extends Application {
         root =loader.load();
         DataDisplayController dataDisplayController = loader.getController();
         dataDisplayController.displayQuery("Query Results: ");
+        dataDisplayController.headers = new ArrayList<String>();
+        dataDisplayController.headers.add("country");
+        dataDisplayController.headers.add("country_id");
+        dataDisplayController.headers.add("totalCases");
+        dataDisplayController.headers.add("gdp_usd_per_cap");
+        //dataDisplayController.resultList =
+
+
 
         stage = (Stage)((Node)event.getSource()).getScene().getWindow();
         scene = new Scene(root);
@@ -55,9 +66,11 @@ public class MenuController extends Application {
         stage.show();
     }
 
-    public void numCasesSortedByWealth(ActionEvent event) {
+    public void numCasesSortedByWealth(ActionEvent event) throws IOException {
         //sort by richest countries and show the total amount of sick people there are per country
-
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("data-display.fxml"));
+        root =loader.load();
+        DataDisplayController dataDisplayController = loader.getController();
         String query =
         "Select from_country_to_id.country, corona_cases.country_id, sum(New_cases) as totalCases, gdp_usd_per_cap "
         +System.lineSeparator()+
@@ -69,12 +82,24 @@ public class MenuController extends Application {
                 +System.lineSeparator()+
         "order by gdp_usd_per_cap Desc";
 
+
+        dataDisplayController.headers = new ArrayList<String>();
+        dataDisplayController.headers.add("country");
+        dataDisplayController.headers.add("country_id");
+        dataDisplayController.headers.add("totalCases");
+        dataDisplayController.headers.add("gdp_usd_per_cap");
+
         System.out.println(query);
         this.connector = new Connect();
         this.connector.openConnection();
-        this.connector.callSQL(query);
+        Map<Integer, List> resMap = this.connector.callSQL(query);
+        dataDisplayController.displayQuery("Query Results: ", resMap);
 
 
+        stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+        scene = new Scene(root);
+        stage.setScene(scene);
+        stage.show();
 
     }
 
