@@ -1,10 +1,15 @@
 package com.example.ecovid;
 //package DB;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static java.lang.String.valueOf;
 
 
 public class Connect {
@@ -52,38 +57,44 @@ public class Connect {
 
 
     }
-    public Map<Integer, List> callSQL(String query) {
 
-        List<String> country = new ArrayList<>();
-        List<Integer> id = new ArrayList<>();
-        List<Integer> total = new ArrayList<>();
-        List<Integer> gdp = new ArrayList<>();
+    private String getRsVal(String header, ResultSet rs, int index) throws SQLException {
+        String val="";
+        switch (header){
+            case "country":
+                val = rs.getString(header);
+                break;
+            case "country_id":
+            case "totalCases":
+            case "gdp_usd_per_cap":
+                val = valueOf(rs.getInt(header));
+                break;
+        }
+        return val;
+    }
+
+    public ObservableList<ModelTable> callSQL(String query,List<String> headers) {
+
+        //HashMap<String,List<String>> resMap = new HashMap<>();
+        ObservableList<ModelTable> obList = FXCollections.observableArrayList();
         try (Statement stmt = conn.createStatement(); ResultSet rs = stmt.executeQuery(query)) {
-
-
-            while (rs.next() == true) {
-
-                /*System.out.print(rs.getInt("country_id"));
-                System.out.print("\t");
-                System.out.print(rs.getInt("daily_vaccinations"));
-                System.out.println();*/
-                country.add(rs.getString("country"));
-                id.add(rs.getInt("country_id"));
-                total.add(rs.getInt("totalCases"));
-                gdp.add(rs.getInt("gdp_usd_per_cap"));
-                System.out.println();
-
+/*            for (int i = 0; i<headers.size();i++){
+                resMap.put(headers.get(i),new ArrayList<String>());
+            }*/
+            List<String> line; //keeps each line to create a ModelTable
+            while (rs.next()) {
+                line = new ArrayList<>();
+                for (int i = 0; i<headers.size();i++){
+                    //resMap.get(headers.get(i)).add(getRsVal(headers.get(i),rs,i));
+                    line.add(getRsVal(headers.get(i),rs,i));
+                }
+                obList.add(new ModelTable(line));
             }
         } catch (SQLException e) {
             System.out.println("ERROR executeQuery - " + e.getMessage());
         }
-        Map<Integer, List> ret = new HashMap<Integer, List>();
-        ret.put(0, country);
-        ret.put(1, id);
-        ret.put(2, total);
-        ret.put(3, gdp);
-        return ret;
-
+        //return resMap;
+        return obList;
     }
 /*
 SELECT * FROM corona_data.country_vaccinations
@@ -105,3 +116,14 @@ SELECT * FROM corona_data.country_vaccinations
         System.out.println("hedf");
     }
 }
+
+
+
+
+
+
+
+
+
+
+

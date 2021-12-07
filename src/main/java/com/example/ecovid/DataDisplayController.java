@@ -13,13 +13,15 @@ import java.util.Map;
 
 public class DataDisplayController {
     @FXML
+    TableView<ModelTable> tableViewResult;
     Label labelName;
-    TableView tableViewResult;
     List<String> headers;
+    Map<String, List<String>> tableMap;
 
 
     
     public void displayQuery(String queryName, Map<Integer, List> resMap){
+
         labelName.setText(queryName);
         //TableView<ObservableList<String>> tableView = new TableView<>();
         for(Map.Entry<Integer,List> map : resMap.entrySet()){

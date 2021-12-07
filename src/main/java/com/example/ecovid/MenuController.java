@@ -50,7 +50,7 @@ public class MenuController extends Application {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("data-display.fxml"));
         root =loader.load();
         DataDisplayController dataDisplayController = loader.getController();
-        dataDisplayController.displayQuery("Query Results: ");
+        //dataDisplayController.displayQuery("Query Results: ");
         dataDisplayController.headers = new ArrayList<String>();
         dataDisplayController.headers.add("country");
         dataDisplayController.headers.add("country_id");
@@ -89,13 +89,11 @@ public class MenuController extends Application {
         dataDisplayController.headers.add("totalCases");
         dataDisplayController.headers.add("gdp_usd_per_cap");
 
-        System.out.println(query);
+        //System.out.println(query);
         this.connector = new Connect();
         this.connector.openConnection();
-        Map<Integer, List> resMap = this.connector.callSQL(query);
-        dataDisplayController.displayQuery("Query Results: ", resMap);
-
-
+        //dataDisplayController.tableMap = this.connector.callSQL(query,dataDisplayController.headers);
+        dataDisplayController.tableViewResult.setItems(this.connector.callSQL(query,dataDisplayController.headers));
         stage = (Stage)((Node)event.getSource()).getScene().getWindow();
         scene = new Scene(root);
         stage.setScene(scene);
