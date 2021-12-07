@@ -45,11 +45,14 @@ public class MenuController extends Application {
         DataDisplayController dataDisplayController = loader.getController();
         dataDisplayController.displayQuery("Query Results: ");
 
+        aa();
+
         stage = (Stage)((Node)event.getSource()).getScene().getWindow();
         scene = new Scene(root);
         stage.setScene(scene);
         stage.show();
     }
+
 
     public static void main(String[] args) {
         launch();
