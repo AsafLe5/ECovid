@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
@@ -11,6 +12,11 @@
          <font>
             <Font size="35.0" />
          </font></Label>
-      <ListView fx:id="resultList" layoutX="33.0" layoutY="100.0" prefHeight="261.0" prefWidth="518.0" />
+      <TableView layoutX="43.0" layoutY="102.0" prefHeight="245.0" prefWidth="514.0">
+        <columns>
+          <TableColumn prefWidth="75.0" text="C2" />
+          <TableColumn prefWidth="75.0" text="C1" />
+        </columns>
+      </TableView>
    </children>
 </AnchorPane>

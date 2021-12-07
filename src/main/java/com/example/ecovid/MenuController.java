@@ -1,4 +1,5 @@
 package com.example.ecovid;
+import com.example.ecovid.Connect;
 
 import javafx.application.Application;
 import javafx.event.ActionEvent;
@@ -11,6 +12,9 @@ import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 public class MenuController extends Application {
     @FXML
@@ -18,7 +22,7 @@ public class MenuController extends Application {
     private Parent root;
     private Stage stage;
     private Scene scene;
-
+    private Connect connector;
     @Override
     public void start(Stage stage) throws IOException {
         try {
@@ -31,6 +35,9 @@ public class MenuController extends Application {
         } catch (Exception e){
             e.printStackTrace();
         }
+        this.connector = new Connect();
+        this.connector.openConnection();
+        System.out.println(this.connector);
         //runMenu();
     }
 
@@ -44,14 +51,58 @@ public class MenuController extends Application {
         root =loader.load();
         DataDisplayController dataDisplayController = loader.getController();
         dataDisplayController.displayQuery("Query Results: ");
+        dataDisplayController.headers = new ArrayList<String>();
+        dataDisplayController.headers.add("country");
+        dataDisplayController.headers.add("country_id");
+        dataDisplayController.headers.add("totalCases");
+        dataDisplayController.headers.add("gdp_usd_per_cap");
+        //dataDisplayController.resultList =
 
-        aa();
+
 
         stage = (Stage)((Node)event.getSource()).getScene().getWindow();
         scene = new Scene(root);
         stage.setScene(scene);
         stage.show();
     }
+
+    public void numCasesSortedByWealth(ActionEvent event) throws IOException {
+        //sort by richest countries and show the total amount of sick people there are per country
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("data-display.fxml"));
+        root =loader.load();
+        DataDisplayController dataDisplayController = loader.getController();
+        String query =
+        "Select from_country_to_id.country, corona_cases.country_id, sum(New_cases) as totalCases, gdp_usd_per_cap "
+        +System.lineSeparator()+
+        "From corona_data.corona_cases, corona_data.from_country_to_id, corona_data.gdp_per_country "
+                +System.lineSeparator()+
+        "where from_country_to_id.COUNTRYID = corona_cases.country_id AND corona_cases.country_id = gdp_per_country.country_id "
+                +System.lineSeparator()+
+        "group by gdp_usd_per_cap "
+                +System.lineSeparator()+
+        "order by gdp_usd_per_cap Desc";
+
+
+        dataDisplayController.headers = new ArrayList<String>();
+        dataDisplayController.headers.add("country");
+        dataDisplayController.headers.add("country_id");
+        dataDisplayController.headers.add("totalCases");
+        dataDisplayController.headers.add("gdp_usd_per_cap");
+
+        System.out.println(query);
+        this.connector = new Connect();
+        this.connector.openConnection();
+        Map<Integer, List> resMap = this.connector.callSQL(query);
+        dataDisplayController.displayQuery("Query Results: ", resMap);
+
+
+        stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+        scene = new Scene(root);
+        stage.setScene(scene);
+        stage.show();
+
+    }
+
 
 
     public static void main(String[] args) {
