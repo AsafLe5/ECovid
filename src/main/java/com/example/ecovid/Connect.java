@@ -76,24 +76,30 @@ public class Connect {
     public ObservableList<ModelTable> callSQL(String query,List<String> headers) {
 
         //HashMap<String,List<String>> resMap = new HashMap<>();
+        //the observable list will hold headers and rows
         ObservableList<ModelTable> obList = FXCollections.observableArrayList();
+        //execute the query
         try (Statement stmt = conn.createStatement(); ResultSet rs = stmt.executeQuery(query)) {
 /*            for (int i = 0; i<headers.size();i++){
                 resMap.put(headers.get(i),new ArrayList<String>());
             }*/
             List<String> line; //keeps each line to create a ModelTable
+            //open up the query line by line
             while (rs.next()) {
                 line = new ArrayList<>();
                 for (int i = 0; i<headers.size();i++){
                     //resMap.get(headers.get(i)).add(getRsVal(headers.get(i),rs,i));
+                    //add each line to lines array
                     line.add(getRsVal(headers.get(i),rs,i));
                 }
+                //once done, set the lines array to the observible list.
                 obList.add(new ModelTable(line));
             }
+
         } catch (SQLException e) {
             System.out.println("ERROR executeQuery - " + e.getMessage());
         }
-        //return resMap;
+        //return observable list;
         return obList;
     }
 /*

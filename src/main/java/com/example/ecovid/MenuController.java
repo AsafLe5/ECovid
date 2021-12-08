@@ -9,7 +9,9 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.TextField;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
+import java.lang.reflect.Field;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -82,18 +84,28 @@ public class MenuController extends Application {
                 +System.lineSeparator()+
         "order by gdp_usd_per_cap Desc";
 
-
         dataDisplayController.headers = new ArrayList<String>();
         dataDisplayController.headers.add("country");
         dataDisplayController.headers.add("country_id");
         dataDisplayController.headers.add("totalCases");
         dataDisplayController.headers.add("gdp_usd_per_cap");
 
+        dataDisplayController.c1.setCellValueFactory(new PropertyValueFactory<>("att1"));
+        dataDisplayController.c2.setCellValueFactory(new PropertyValueFactory<>("att2"));
+        dataDisplayController.c3.setCellValueFactory(new PropertyValueFactory<>("att3"));
+        dataDisplayController.c4.setCellValueFactory(new PropertyValueFactory<>("att4"));
+
+
+
         //System.out.println(query);
         this.connector = new Connect();
         this.connector.openConnection();
         //dataDisplayController.tableMap = this.connector.callSQL(query,dataDisplayController.headers);
+        //tableViewResults contains observable list of the values that should be displayed in the table
+
         dataDisplayController.tableViewResult.setItems(this.connector.callSQL(query,dataDisplayController.headers));
+        //System.out.println(dataDisplayController.tableViewResult);
+        dataDisplayController.displayQuery("numCasesSortedByWealth");
         stage = (Stage)((Node)event.getSource()).getScene().getWindow();
         scene = new Scene(root);
         stage.setScene(scene);
