@@ -9,16 +9,16 @@ public class ModelTable {
     private String att2;
     private String att3;
     private String att4;
-/*    private String att5;
+   private String att5;
     private String att6;
     private String att7;
     private String att8;
-    private String att9;*/
+    private String att9;
 
     public ModelTable(List<String> line) {
         int size = line.size();
         switch (size){
-/*            case 9:
+           case 9:
                 att9 = line.get(8);
             case 8:
                 att8 = line.get(7);
@@ -27,7 +27,7 @@ public class ModelTable {
             case 6:
                 att6 = line.get(5);
             case 5:
-                att5 = line.get(4);*/
+                att5 = line.get(4);
             case 4:
                 att4 = line.get(3);
                 System.out.println(att4);

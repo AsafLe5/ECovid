@@ -95,6 +95,9 @@ public class MenuController extends Application {
         dataDisplayController.c3.setCellValueFactory(new PropertyValueFactory<>("att3"));
         dataDisplayController.c4.setCellValueFactory(new PropertyValueFactory<>("att4"));
 
+        dataDisplayController.setColText(dataDisplayController.headers);
+
+
 
 
         //System.out.println(query);

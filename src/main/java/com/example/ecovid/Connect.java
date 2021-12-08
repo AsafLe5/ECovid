@@ -52,7 +52,6 @@ public class Connect {
         country_id = gdp_per_country.country_id
         group by gdp_usd_per_cap
         order by gdp_usd_per_cap Desc
-
          */
 
 

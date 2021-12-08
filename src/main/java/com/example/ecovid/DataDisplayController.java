@@ -28,12 +28,21 @@ public class DataDisplayController implements Initializable {
     public TableColumn<ModelTable, String> c3;
     @FXML
     public TableColumn<ModelTable, String> c4;
+    @FXML
+    public TableColumn<ModelTable, String> c5;
+    @FXML
+    public TableColumn<ModelTable, String> c6;
+    @FXML
+    public TableColumn<ModelTable, String> c7;
+    @FXML
+    public TableColumn<ModelTable, String> c8;
+    @FXML
+    public TableColumn<ModelTable, String> c9;
     List<String> headers;
     Map<String, List<String>> tableMap;
 
 
-    
-    public void displayQuery(String queryName /*,Map<Integer, List> resMap*/){
+    public void displayQuery(String queryName /*,Map<Integer, List> resMap*/) {
 
         labelName.setText(queryName);
 
@@ -55,6 +64,35 @@ public class DataDisplayController implements Initializable {
             System.out.println("shmuel");
 
         }*/
+    }
+
+    public void setColText(List<String> headers) {
+        int size = headers.size();
+        switch (size) {
+            case 9:
+                c9.setText(headers.get(8));
+
+            case 8:
+                c8.setText(headers.get(7));
+
+            case 7:
+                c7.setText(headers.get(6));
+
+            case 6:
+                c6.setText(headers.get(5));
+
+            case 5:
+                c5.setText(headers.get(4));
+            case 4:
+                c4.setText(headers.get(3));
+            case 3:
+                c3.setText(headers.get(2));
+
+            case 2:
+                c2.setText(headers.get(1));
+            case 1:
+                c1.setText(headers.get(0));
+        }
     }
 
     @Override
