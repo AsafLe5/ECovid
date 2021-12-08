@@ -1,5 +1,7 @@
 package com.example.ecovid;
 
+import javafx.event.ActionEvent;
+
 import java.sql.SQLOutput;
 import java.util.ArrayList;
 import java.util.List;
@@ -9,7 +11,7 @@ public class ModelTable {
     private String att2;
     private String att3;
     private String att4;
-   private String att5;
+    private String att5;
     private String att6;
     private String att7;
     private String att8;
@@ -30,14 +32,12 @@ public class ModelTable {
                 att5 = line.get(4);
             case 4:
                 att4 = line.get(3);
-                System.out.println(att4);
             case 3:
                 att3 = line.get(2);
             case 2:
                 att2 = line.get(1);
             case 1:
                 att1 = line.get(0);
-                System.out.println("hello");
         }
 
     }
@@ -74,7 +74,7 @@ public class ModelTable {
         this.att4 = att4;
     }
 
-/*    public String getAtt5() {
+    public String getAtt5() {
         return att5;
     }
 
@@ -102,6 +102,7 @@ public class ModelTable {
         return att8;
     }
 
+
     public void setAtt8(String att8) {
         this.att8 = att8;
     }
@@ -112,9 +113,9 @@ public class ModelTable {
 
     public void setAtt9(String att9) {
         this.att9 = att9;
-    }*/
+    }
 
-/*    public ModelTable(String att1) {
+    public ModelTable(String att1) {
         this.att1 = att1;
     }
 
@@ -168,10 +169,10 @@ public class ModelTable {
         this.att2 = att2;
         this.att3 = att3;
         this.att4 = att4;
-*//*        this.att5 = att5;
+       this.att5 = att5;
         this.att6 = att6;
         this.att7 = att7;
-        this.att8 = att8;*//*
+        this.att8 = att8;
     }
 
     public ModelTable(String att1, String att2, String att3, String att4, String att5, String att6, String att7, String att8, String att9) {
@@ -179,10 +180,10 @@ public class ModelTable {
         this.att2 = att2;
         this.att3 = att3;
         this.att4 = att4;
-*//*        this.att5 = att5;
+        this.att5 = att5;
         this.att6 = att6;
         this.att7 = att7;
         this.att8 = att8;
-        this.att9 = att9;*//*
-    }*/
+        this.att9 = att9;
+    }
 }

@@ -116,7 +116,38 @@ public class MenuController extends Application {
 
     }
 
+    public void covidSpreadMonth(ActionEvent event)  throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("country_wealth_options_view.fxml"));
+        root = loader.load();
+        CountryWealthOptionsController countryWealthOptionsController = loader.getController();
+        String queryPart1 = "select sum(accumCases), w.curMonth, sum(NewCassesPerPop)/20, sum(w.population), w.curYear\n" +
+                "from (select x.id1, from_country_to_id.country, EXTRACT(YEAR FROM x.Dr1) as curYear, x.accumCases , EXTRACT(MONTH FROM x.Dr1) as curMonth, gdp_per_country.rank,\n" +
+                " population_by_country_2020.Population_2020 as population, (x.accumCases/population_by_country_2020.Population_2020)*100 as NewCassesPerPop\n" +
+                "\tfrom corona_data.from_country_to_id, corona_data.gdp_per_country, corona_data.population_by_country_2020, (\n" +
+                "\t\tSelect corona_cases.country_id as id1, New_cases as Nc1,Date_reported as Dr1, sum(New_cases) OVER (PARTITION BY country_id ORDER BY Date_reported) as accumCases\n" +
+                "\t\tFrom corona_data.corona_cases) as x\n" +
+                "\twhere  from_country_to_id.COUNTRYID=x.id1 AND x.id1= gdp_per_country.country_id AND corona_data.population_by_country_2020.country_id = x.id1 AND gdp_per_country.rank ";
+        String queryPart2 = "\tgroup by EXTRACT(MONTH FROM x.Dr1),EXTRACT(YEAR FROM x.Dr1), x.id1\n" +
+                "\torder by gdp_per_country.rank) as w\n" +
+                "group by w.curMonth, w.curYear";
 
+        countryWealthOptionsController.headers = new ArrayList<String>();
+        countryWealthOptionsController.headers.add("sum(accumCases)");
+        countryWealthOptionsController.headers.add("curMonth");
+        countryWealthOptionsController.headers.add("sum(NewCassesPerPop)/20");
+        countryWealthOptionsController.headers.add("sum(w.population)");
+        countryWealthOptionsController.headers.add("curYear");
+        this.connector = new Connect();
+        this.connector.openConnection();
+        countryWealthOptionsController.connection = this.connector;
+        countryWealthOptionsController.queryPart1 = queryPart1;
+        countryWealthOptionsController.queryPart2 = queryPart2;
+        stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+        scene = new Scene(root);
+        stage.setScene(scene);
+        stage.show();
+
+    }
 
     public static void main(String[] args) {
         launch();

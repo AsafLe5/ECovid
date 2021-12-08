@@ -60,13 +60,22 @@ public class Connect {
     private String getRsVal(String header, ResultSet rs, int index) throws SQLException {
         String val="";
         switch (header){
+
+
             case "country":
                 val = rs.getString(header);
                 break;
+            case "sum(accumCases)":
+            case "curMonth":
+            case "sum(w.population)":
+            case "curYear":
             case "country_id":
             case "totalCases":
             case "gdp_usd_per_cap":
                 val = valueOf(rs.getInt(header));
+                break;
+            case "sum(NewCassesPerPop)/20":
+                val = valueOf(rs.getDouble(header));
                 break;
         }
         return val;
@@ -90,6 +99,7 @@ public class Connect {
                     //resMap.get(headers.get(i)).add(getRsVal(headers.get(i),rs,i));
                     //add each line to lines array
                     line.add(getRsVal(headers.get(i),rs,i));
+
                 }
                 //once done, set the lines array to the observible list.
                 obList.add(new ModelTable(line));
