@@ -61,10 +61,18 @@ public class Connect {
         String val="";
         switch (header){
 
-
+            case "vacc_correct":
+            case "Country":
             case "country":
+            case "countryName":
                 val = rs.getString(header);
                 break;
+
+            case "countryRank":
+            case "times_visited":
+            case "max(accumVacc)":
+            case "population":
+            case "sum(accumVacc)":
             case "sum(accumCases)":
             case "curMonth":
             case "sum(w.population)":
@@ -72,9 +80,14 @@ public class Connect {
             case "country_id":
             case "totalCases":
             case "gdp_usd_per_cap":
+            case "id1":
+
                 val = valueOf(rs.getInt(header));
                 break;
+            case "max(w.vaccinePerPopulation)":
+            case "sum(NewVacPerPop)/40":
             case "sum(NewCassesPerPop)/20":
+            case "vaccinePerPopulation":
                 val = valueOf(rs.getDouble(header));
                 break;
         }

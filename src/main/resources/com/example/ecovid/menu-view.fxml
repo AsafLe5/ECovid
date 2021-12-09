@@ -41,7 +41,11 @@
       <Button layoutX="51.0" layoutY="175.0" mnemonicParsing="false" text="wealthiest countries" />
       <TextField fx:id="nameTextField" layoutX="244.0" layoutY="150.0" />
       <Button fx:id="okButton" layoutX="293.0" layoutY="200.0" mnemonicParsing="false" onAction="#button" text="Button" />
-      <Button fx:id="numCasesSortedWealth" layoutX="51.0" layoutY="238.0" mnemonicParsing="false" onAction="#numCasesSortedByWealth" text="number of cases sorted by countries wealth" />
-      <Button fx:id="buttonCovidSpreadMonth" layoutX="51.0" layoutY="284.0" mnemonicParsing="false" onAction="#covidSpreadMonth" text="Covid spread per country" />
+      <Button fx:id="numCasesSortedWealth" layoutX="287.0" layoutY="333.0" mnemonicParsing="false" onAction="#numCasesSortedByWealth" text="number of cases sorted by countries wealth" />
+      <Button fx:id="buttonCovidSpreadMonth" layoutX="37.0" layoutY="283.0" mnemonicParsing="false" onAction="#covidSpreadMonth" text="Covid spread per country" />
+      <Button fx:id="vaccRateMonth" layoutX="39.0" layoutY="321.0" mnemonicParsing="false" onAction="#vaccRateMonth" text="Vaccine rate per country" />
+      <Button fx:id="totVaccPerCountry" layoutX="300.0" layoutY="295.0" mnemonicParsing="false" onAction="#totVacCountry" text="Total Vaccinations Percent per country" />
+      <Button fx:id="countryPhizer" layoutX="34.0" layoutY="234.0" mnemonicParsing="false" onAction="#countryPhizer" text="Countries who used Phizer" />
+      <Button fx:id="richestMostVacc" layoutX="315.0" layoutY="246.0" mnemonicParsing="false" onAction="#richestMostVacc" text="Richest Most Vaccinated Country" />
    </children>
 </AnchorPane>
