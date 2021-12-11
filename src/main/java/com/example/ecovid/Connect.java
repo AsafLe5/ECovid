@@ -70,7 +70,7 @@ public class Connect {
 
             case "countryRank":
             case "times_visited":
-            case "max(accumVacc)":
+
             case "population":
             case "sum(accumVacc)":
             case "sum(accumCases)":
@@ -90,6 +90,8 @@ public class Connect {
             case "vaccinePerPopulation":
                 val = valueOf(rs.getDouble(header));
                 break;
+            case "max(accumVacc)":
+                val = valueOf((rs.getLong(header)));
         }
         return val;
     }
@@ -140,8 +142,18 @@ SELECT * FROM corona_data.country_vaccinations
         }
 
     }
-    public void pri(){
-        System.out.println("hedf");
+
+    public boolean queryUpdate(String query) {
+        int result;
+
+        try (Statement stmt = conn.createStatement();) {
+            result = stmt.executeUpdate(query);
+            // result = stmt.executeUpdate("DELETE FROM demo");
+            return true;
+
+        } catch (SQLException e) {
+            return false;
+        }
     }
 }
 

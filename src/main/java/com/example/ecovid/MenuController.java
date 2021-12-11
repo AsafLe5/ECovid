@@ -1,5 +1,4 @@
 package com.example.ecovid;
-import com.example.ecovid.Connect;
 
 import javafx.application.Application;
 import javafx.event.ActionEvent;
@@ -11,16 +10,15 @@ import javafx.scene.Scene;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
-import java.lang.reflect.Field;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 public class MenuController extends Application {
     @FXML
-    private TextField nameTextField;
+    private TextField countryUpdate;
+    @FXML
+    private TextField timesUpdate;
     private Parent root;
     private Stage stage;
     private Scene scene;
@@ -47,21 +45,47 @@ public class MenuController extends Application {
 
     }
 
-    public void button(ActionEvent event) throws IOException {
-        String userName = nameTextField.getText();
+    public void update(ActionEvent event) throws IOException {
+        String countryName = countryUpdate.getText();
+        String times = timesUpdate.getText();
+
+        /*
+        Update corona_data.from_country_to_id
+        set times_visited = input_num
+        where Country = string_name
+
+         */
+        //sort by richest countries and show the total amount of sick people there are per country
         FXMLLoader loader = new FXMLLoader(getClass().getResource("data-display.fxml"));
         root =loader.load();
         DataDisplayController dataDisplayController = loader.getController();
-        //dataDisplayController.displayQuery("Query Results: ");
+        String query =
+                "Update corona_data.from_country_to_id\n" +
+                        "set times_visited = "+times+"\n" +
+                        "where Country = \'"+countryName+"\'";
+
         dataDisplayController.headers = new ArrayList<String>();
-        dataDisplayController.headers.add("country");
-        dataDisplayController.headers.add("country_id");
-        dataDisplayController.headers.add("totalCases");
-        dataDisplayController.headers.add("gdp_usd_per_cap");
-        //dataDisplayController.resultList =
+
+
+        dataDisplayController.setColText(dataDisplayController.headers);
 
 
 
+
+        //System.out.println(query);
+        this.connector = new Connect();
+        this.connector.openConnection();
+        //dataDisplayController.tableMap = this.connector.callSQL(query,dataDisplayController.headers);
+        //tableViewResults contains observable list of the values that should be displayed in the table
+
+        boolean worked = this.connector.queryUpdate(query);
+        //System.out.println(dataDisplayController.tableViewResult);
+        if (worked){
+            dataDisplayController.displayQuery("Successfully Updated!");
+        }
+        else {
+            dataDisplayController.displayQuery("Update failed. Confirm information submitted is correct");
+        }
         stage = (Stage)((Node)event.getSource()).getScene().getWindow();
         scene = new Scene(root);
         stage.setScene(scene);
@@ -162,7 +186,7 @@ public class MenuController extends Application {
                 " \t\t\tSelect country_vaccinations.country_id as id1, daily_vaccinations as dV1,Date as Dr1, sum(daily_vaccinations) OVER (PARTITION BY country_id ORDER BY Date) as accumVacc\n" +
                 " \t\t\tFrom corona_data.country_vaccinations) as x\n" +
                 " \twhere  from_country_to_id.COUNTRYID=x.id1 AND x.id1= gdp_per_country.country_id AND corona_data.population_by_country_2020.country_id = x.id1 AND gdp_per_country.rank ";
-        String queryPart2 = "AND EXTRACT(DAY FROM x.Dr1) = (\n"+
+        String queryPart2 = " AND EXTRACT(DAY FROM x.Dr1) = (\n"+
         "Select Max(EXTRACT(DAY FROM country_vaccinations.date)) from corona_data.country_vaccinations where x.id1= country_vaccinations.country_id AND\n"+
         "EXTRACT(MONTH FROM country_vaccinations.date) = EXTRACT(MONTH FROM x.Dr1) AND EXTRACT(YEAR FROM country_vaccinations.date) = EXTRACT(YEAR FROM x.Dr1))\n"+
         "group by EXTRACT(MONTH FROM x.Dr1),EXTRACT(YEAR FROM x.Dr1), x.id1\n"+
@@ -170,6 +194,7 @@ public class MenuController extends Application {
         "where (w.curYear!= 2021 or w.curMonth<=9)\n"+
         "group by w.curMonth, w.curYear\n"+
         "order by w.curYear, w.curMonth";
+
 
         //create the headers
         countryWealthOptionsController.headers = new ArrayList<String>();
@@ -204,6 +229,7 @@ public class MenuController extends Application {
                 "where corona_data.from_country_to_id.COUNTRYID=cdcv.country_id AND corona_data.population_by_country_2020.country_id = cdcv.country_id AND cdcv.country_id= gdp_per_country.country_id) as x\n"+
         "group by x.id1\n"+
         "order by vaccinePerPopulation desc";
+        System.out.println(query);
 
         dataDisplayController.headers = new ArrayList<String>();
         dataDisplayController.headers.add("id1");
@@ -244,7 +270,7 @@ public class MenuController extends Application {
     }
 
     //DID VAC CORRECT AS GETSTRING!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    public void countryPhizer(ActionEvent event) throws IOException {
+    public void countryPfizer(ActionEvent event) throws IOException {
         //sort by richest countries and show the total amount of sick people there are per country
         FXMLLoader loader = new FXMLLoader(getClass().getResource("data-display.fxml"));
         root =loader.load();
@@ -277,7 +303,7 @@ public class MenuController extends Application {
 
         dataDisplayController.tableViewResult.setItems(this.connector.callSQL(query,dataDisplayController.headers));
         //System.out.println(dataDisplayController.tableViewResult);
-        dataDisplayController.displayQuery("Countries that used Phizer");
+        dataDisplayController.displayQuery("Countries that used Pfizer");
         stage = (Stage)((Node)event.getSource()).getScene().getWindow();
         scene = new Scene(root);
         stage.setScene(scene);
