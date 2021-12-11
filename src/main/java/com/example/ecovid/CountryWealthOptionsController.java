@@ -31,13 +31,13 @@ public class CountryWealthOptionsController {
     private Scene scene;
 
 
-
+    //does for the 20 richest country
     public void richOnClick(ActionEvent event) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("data-display.fxml"));
         root = loader.load();
         DataDisplayController dataDisplayController = loader.getController();
+        //put the <=20 part in the query
         String fullQuery = queryPart1 + "<=20" + queryPart2;
-
         dataDisplayController.tableViewResult.setItems(connection.callSQL(fullQuery,headers));
 
         dataDisplayController.c1.setCellValueFactory(new PropertyValueFactory<>("att1"));
@@ -51,6 +51,7 @@ public class CountryWealthOptionsController {
         stage.setScene(scene);
         stage.show();
     }
+    //does for the 20 middle countries
     public void middleOnClick(ActionEvent event) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("data-display.fxml"));
         root = loader.load();
@@ -70,7 +71,7 @@ public class CountryWealthOptionsController {
         stage.setScene(scene);
         stage.show();
     }
-
+    //does for the 20 poorest countries
     public void poorOnClick(ActionEvent event) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("data-display.fxml"));
         root = loader.load();

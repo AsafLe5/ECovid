@@ -16,8 +16,8 @@ public class ModelTable {
     private String att7;
     private String att8;
     private String att9;
-
     public ModelTable(List<String> line) {
+        //sets the column attributes what the rs returns from sql
         int size = line.size();
         switch (size){
            case 9:

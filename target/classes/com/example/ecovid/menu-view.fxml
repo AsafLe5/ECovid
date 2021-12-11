@@ -7,6 +7,7 @@
 <?import javafx.scene.paint.Color?>
 <?import javafx.scene.paint.RadialGradient?>
 <?import javafx.scene.paint.Stop?>
+<?import javafx.scene.shape.Line?>
 <?import javafx.scene.text.Font?>
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.ecovid.MenuController">
@@ -37,8 +38,6 @@
             <Font size="18.0" />
          </font>
       </Label>
-      <Button layoutX="51.0" layoutY="139.0" mnemonicParsing="false" text="safest countries" />
-      <Button layoutX="51.0" layoutY="175.0" mnemonicParsing="false" text="wealthiest countries" />
       <TextField fx:id="countryUpdate" layoutX="300.0" layoutY="133.0" promptText="Enter Country Name" />
       <Button fx:id="okButton" layoutX="460.0" layoutY="152.0" mnemonicParsing="false" onAction="#update" text="Update Times Visited!" />
       <Button fx:id="numCasesSortedWealth" layoutX="287.0" layoutY="333.0" mnemonicParsing="false" onAction="#numCasesSortedByWealth" text="number of cases sorted by countries wealth" />
@@ -48,5 +47,8 @@
       <Button fx:id="countryPhizer" layoutX="34.0" layoutY="234.0" mnemonicParsing="false" onAction="#countryPfizer" text="Countries who used Pfizer" />
       <Button fx:id="richestMostVacc" layoutX="315.0" layoutY="246.0" mnemonicParsing="false" onAction="#richestMostVacc" text="Richest Most Vaccinated Country" />
       <TextField fx:id="timesUpdate" layoutX="300.0" layoutY="175.0" promptText="Enter Times Visited" />
+      <Line endX="159.0" layoutX="443.0" layoutY="206.0" startX="-150.5" />
+      <Line endX="100.0" layoutX="193.0" layoutY="205.0" startX="100.0" startY="-92.0" />
+      <Line endX="159.0" layoutX="443.0" layoutY="113.0" startX="-150.5" />
    </children>
 </AnchorPane>

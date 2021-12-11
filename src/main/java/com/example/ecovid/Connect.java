@@ -8,13 +8,15 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.io.*;
+import java.util.Scanner;
 
 import static java.lang.String.valueOf;
 
 
 public class Connect {
     Connection conn; // DB connection
-    public boolean openConnection() {
+    public boolean openConnection() throws FileNotFoundException {
         // loading the driver
         try {
             Class.forName("com.mysql.jdbc.Driver");
@@ -23,15 +25,34 @@ public class Connect {
             return false;
         }
         System.out.println("Driver loaded successfully");
-
         System.out.print("Trying to connect... ");
 
-        // creating the connection. Parameters should be taken from config file.
+        /*
+        Scanner sc = new Scanner(new File("conf.csv"));
+        sc.useDelimiter(",");   //sets the delimiter pattern
+        //read info from conf file
+        // creating the connection
+        String host = sc.next().toString();
+        System.out.println("host:"+host.equals("localhost"));
+        String port = sc.next().toString();
+        System.out.println("host:"+port.equals("3306"));
+        String schema = sc.next().toString();
+        System.out.println("host:"+schema.equals("corona_data"));
+        String user = sc.next().toString();
+        System.out.println("host:"+user.equals("root"));
+        String password = sc.next().toString();
+        System.out.println("host:"+password.equals("#gL!P3NC2?msA9="));
+        System.out.println("password:"+password);
+        sc.close();
+        */
         String host = "localhost";
         String port = "3306";
         String schema = "corona_data";
         String user = "root";
         String password = "#gL!P3NC2?msA9=";
+
+
+
         try {
             System.out.println("trying to connect");
             conn = DriverManager.getConnection("jdbc:mysql://" + host + ":" + port + "/" + schema, user, password);
@@ -43,20 +64,8 @@ public class Connect {
         System.out.println("Connected!");
         return true;
     }
-    public void numCasesSortedByWealth() {
-        //sort by richest countries and show the total amount of sick people there are per country
-        /*
-        Select from_country_to_id.country, corona_cases.country_id, sum(New_cases) as totalCases, gdp_usd_per_cap
-        From corona_data.corona_cases, corona_data.from_country_to_id, corona_data.gdp_per_country
-        where from_country_to_id.COUNTRYID = corona_cases.country_id AND corona_cases.
-        country_id = gdp_per_country.country_id
-        group by gdp_usd_per_cap
-        order by gdp_usd_per_cap Desc
-         */
 
-
-    }
-
+    //returns the value of rs from the query result
     private String getRsVal(String header, ResultSet rs, int index) throws SQLException {
         String val="";
         switch (header){
@@ -103,15 +112,11 @@ public class Connect {
         ObservableList<ModelTable> obList = FXCollections.observableArrayList();
         //execute the query
         try (Statement stmt = conn.createStatement(); ResultSet rs = stmt.executeQuery(query)) {
-/*            for (int i = 0; i<headers.size();i++){
-                resMap.put(headers.get(i),new ArrayList<String>());
-            }*/
             List<String> line; //keeps each line to create a ModelTable
             //open up the query line by line
             while (rs.next()) {
                 line = new ArrayList<>();
                 for (int i = 0; i<headers.size();i++){
-                    //resMap.get(headers.get(i)).add(getRsVal(headers.get(i),rs,i));
                     //add each line to lines array
                     line.add(getRsVal(headers.get(i),rs,i));
 
@@ -126,9 +131,6 @@ public class Connect {
         //return observable list;
         return obList;
     }
-/*
-SELECT * FROM corona_data.country_vaccinations
-*/
 
     /**
      * close the connection
@@ -142,13 +144,10 @@ SELECT * FROM corona_data.country_vaccinations
         }
 
     }
-
+    //update query returns if update succeded or not
     public boolean queryUpdate(String query) {
-        int result;
-
         try (Statement stmt = conn.createStatement();) {
-            result = stmt.executeUpdate(query);
-            // result = stmt.executeUpdate("DELETE FROM demo");
+            stmt.executeUpdate(query);
             return true;
 
         } catch (SQLException e) {

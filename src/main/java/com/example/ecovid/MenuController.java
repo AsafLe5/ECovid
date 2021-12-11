@@ -23,6 +23,7 @@ public class MenuController extends Application {
     private Stage stage;
     private Scene scene;
     private Connect connector;
+
     @Override
     public void start(Stage stage) throws IOException {
         try {
@@ -32,11 +33,22 @@ public class MenuController extends Application {
             stage.setTitle("Hello!");
             stage.setScene(scene);
             stage.show();
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
         this.connector = new Connect();
-        this.connector.openConnection();
+        //if the connection failed, display appropriate message
+        if (!this.connector.openConnection()) {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("data-display.fxml"));
+            root = loader.load();
+            DataDisplayController dataDisplayController = loader.getController();
+            dataDisplayController.displayQuery("Unable to connect to MySQL, check conf.csv is OK");
+            scene = new Scene(root);
+            stage.setScene(scene);
+            stage.show();
+
+        }
+
         System.out.println(this.connector);
         //runMenu();
     }
@@ -45,75 +57,62 @@ public class MenuController extends Application {
 
     }
 
+    //updated times visited
     public void update(ActionEvent event) throws IOException {
         String countryName = countryUpdate.getText();
         String times = timesUpdate.getText();
 
-        /*
-        Update corona_data.from_country_to_id
-        set times_visited = input_num
-        where Country = string_name
-
-         */
-        //sort by richest countries and show the total amount of sick people there are per country
+        //link to data display page in fxml
         FXMLLoader loader = new FXMLLoader(getClass().getResource("data-display.fxml"));
-        root =loader.load();
+        root = loader.load();
         DataDisplayController dataDisplayController = loader.getController();
+        //set query
         String query =
                 "Update corona_data.from_country_to_id\n" +
-                        "set times_visited = "+times+"\n" +
-                        "where Country = \'"+countryName+"\'";
-
-        dataDisplayController.headers = new ArrayList<String>();
-
-
-        dataDisplayController.setColText(dataDisplayController.headers);
+                        "set times_visited = " + times + "\n" +
+                        "where Country = \'" + countryName + "\'";
 
 
 
-
-        //System.out.println(query);
         this.connector = new Connect();
         this.connector.openConnection();
-        //dataDisplayController.tableMap = this.connector.callSQL(query,dataDisplayController.headers);
-        //tableViewResults contains observable list of the values that should be displayed in the table
-
+        //update the table with update query, see if the update worked
         boolean worked = this.connector.queryUpdate(query);
         //System.out.println(dataDisplayController.tableViewResult);
-        if (worked){
+        if (worked) {
             dataDisplayController.displayQuery("Successfully Updated!");
-        }
-        else {
+        } else {
             dataDisplayController.displayQuery("Update failed. Confirm information submitted is correct");
         }
-        stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+        stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         scene = new Scene(root);
         stage.setScene(scene);
         stage.show();
     }
-
+    //sort by richest countries and show the total amount of sick people there are per country
     public void numCasesSortedByWealth(ActionEvent event) throws IOException {
-        //sort by richest countries and show the total amount of sick people there are per country
+
         FXMLLoader loader = new FXMLLoader(getClass().getResource("data-display.fxml"));
-        root =loader.load();
+        root = loader.load();
         DataDisplayController dataDisplayController = loader.getController();
         String query =
-        "Select from_country_to_id.country, corona_cases.country_id, sum(New_cases) as totalCases, gdp_usd_per_cap "
-        +System.lineSeparator()+
-        "From corona_data.corona_cases, corona_data.from_country_to_id, corona_data.gdp_per_country "
-                +System.lineSeparator()+
-        "where from_country_to_id.COUNTRYID = corona_cases.country_id AND corona_cases.country_id = gdp_per_country.country_id "
-                +System.lineSeparator()+
-        "group by gdp_usd_per_cap "
-                +System.lineSeparator()+
-        "order by gdp_usd_per_cap Desc";
-
+                "Select from_country_to_id.country, corona_cases.country_id, sum(New_cases) as totalCases, gdp_usd_per_cap "
+                        + System.lineSeparator() +
+                        "From corona_data.corona_cases, corona_data.from_country_to_id, corona_data.gdp_per_country "
+                        + System.lineSeparator() +
+                        "where from_country_to_id.COUNTRYID = corona_cases.country_id AND corona_cases.country_id = gdp_per_country.country_id "
+                        + System.lineSeparator() +
+                        "group by gdp_usd_per_cap "
+                        + System.lineSeparator() +
+                        "order by gdp_usd_per_cap Desc";
+        //these are the titles of each colomn that will be returned from the query
         dataDisplayController.headers = new ArrayList<String>();
         dataDisplayController.headers.add("country");
         dataDisplayController.headers.add("country_id");
         dataDisplayController.headers.add("totalCases");
         dataDisplayController.headers.add("gdp_usd_per_cap");
 
+        //set the colomns to be the attributes
         dataDisplayController.c1.setCellValueFactory(new PropertyValueFactory<>("att1"));
         dataDisplayController.c2.setCellValueFactory(new PropertyValueFactory<>("att2"));
         dataDisplayController.c3.setCellValueFactory(new PropertyValueFactory<>("att3"));
@@ -122,25 +121,31 @@ public class MenuController extends Application {
         dataDisplayController.setColText(dataDisplayController.headers);
 
 
-
-
         //System.out.println(query);
         this.connector = new Connect();
         this.connector.openConnection();
         //dataDisplayController.tableMap = this.connector.callSQL(query,dataDisplayController.headers);
         //tableViewResults contains observable list of the values that should be displayed in the table
 
-        dataDisplayController.tableViewResult.setItems(this.connector.callSQL(query,dataDisplayController.headers));
+        //put the results in the table
+        dataDisplayController.tableViewResult.setItems(this.connector.callSQL(query, dataDisplayController.headers));
         //System.out.println(dataDisplayController.tableViewResult);
         dataDisplayController.displayQuery("numCasesSortedByWealth");
-        stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+        stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         scene = new Scene(root);
         stage.setScene(scene);
         stage.show();
 
     }
-
-    public void covidSpreadMonth(ActionEvent event)  throws IOException {
+    /*
+    displays covid spread per month in 20 countries
+-- user will have 3 buttons, one for rich, middle, poor and based on that we'll put a string of either:
+-- 1) <=20
+-- 2) >175
+-- 3) BETWEEN 91 AND 110
+-- string will go here "AND gdp_per_country.rank"
+     */
+    public void covidSpreadMonth(ActionEvent event) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("country_wealth_options_view.fxml"));
         root = loader.load();
         CountryWealthOptionsController countryWealthOptionsController = loader.getController();
@@ -166,14 +171,22 @@ public class MenuController extends Application {
         countryWealthOptionsController.connection = this.connector;
         countryWealthOptionsController.queryPart1 = queryPart1;
         countryWealthOptionsController.queryPart2 = queryPart2;
-        stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+        stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         scene = new Scene(root);
         stage.setScene(scene);
         stage.show();
 
     }
 
-    public void vaccRateMonth(ActionEvent event)  throws IOException {
+    /*
+    -- query 3: shows vaccines per mounth per 20 countries.
+-- user will have 3 buttons, one for rich, middle, poor and based on that we'll put a string of either:
+-- 1) <=20
+-- 2) >175
+-- 3) BETWEEN 91 AND 110
+-- string will go here "AND gdp_per_country.rank"
+     */
+    public void vaccRateMonth(ActionEvent event) throws IOException {
 
         FXMLLoader loader = new FXMLLoader(getClass().getResource("country_wealth_options_view.fxml"));
         root = loader.load();
@@ -186,14 +199,14 @@ public class MenuController extends Application {
                 " \t\t\tSelect country_vaccinations.country_id as id1, daily_vaccinations as dV1,Date as Dr1, sum(daily_vaccinations) OVER (PARTITION BY country_id ORDER BY Date) as accumVacc\n" +
                 " \t\t\tFrom corona_data.country_vaccinations) as x\n" +
                 " \twhere  from_country_to_id.COUNTRYID=x.id1 AND x.id1= gdp_per_country.country_id AND corona_data.population_by_country_2020.country_id = x.id1 AND gdp_per_country.rank ";
-        String queryPart2 = " AND EXTRACT(DAY FROM x.Dr1) = (\n"+
-        "Select Max(EXTRACT(DAY FROM country_vaccinations.date)) from corona_data.country_vaccinations where x.id1= country_vaccinations.country_id AND\n"+
-        "EXTRACT(MONTH FROM country_vaccinations.date) = EXTRACT(MONTH FROM x.Dr1) AND EXTRACT(YEAR FROM country_vaccinations.date) = EXTRACT(YEAR FROM x.Dr1))\n"+
-        "group by EXTRACT(MONTH FROM x.Dr1),EXTRACT(YEAR FROM x.Dr1), x.id1\n"+
-        "order by gdp_per_country.rank) as w\n"+
-        "where (w.curYear!= 2021 or w.curMonth<=9)\n"+
-        "group by w.curMonth, w.curYear\n"+
-        "order by w.curYear, w.curMonth";
+        String queryPart2 = " AND EXTRACT(DAY FROM x.Dr1) = (\n" +
+                "Select Max(EXTRACT(DAY FROM country_vaccinations.date)) from corona_data.country_vaccinations where x.id1= country_vaccinations.country_id AND\n" +
+                "EXTRACT(MONTH FROM country_vaccinations.date) = EXTRACT(MONTH FROM x.Dr1) AND EXTRACT(YEAR FROM country_vaccinations.date) = EXTRACT(YEAR FROM x.Dr1))\n" +
+                "group by EXTRACT(MONTH FROM x.Dr1),EXTRACT(YEAR FROM x.Dr1), x.id1\n" +
+                "order by gdp_per_country.rank) as w\n" +
+                "where (w.curYear!= 2021 or w.curMonth<=9)\n" +
+                "group by w.curMonth, w.curYear\n" +
+                "order by w.curYear, w.curMonth";
 
 
         //create the headers
@@ -209,26 +222,29 @@ public class MenuController extends Application {
         countryWealthOptionsController.queryPart1 = queryPart1;
         countryWealthOptionsController.queryPart2 = queryPart2;
 
-        stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+        stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         scene = new Scene(root);
         stage.setScene(scene);
         stage.show();
     }
 
+    /*
+    displays total percent of vaccinated people per country
+     */
     public void totVacCountry(ActionEvent event) throws IOException {
         //sort by richest countries and show the total amount of sick people there are per country
         FXMLLoader loader = new FXMLLoader(getClass().getResource("data-display.fxml"));
-        root =loader.load();
+        root = loader.load();
         DataDisplayController dataDisplayController = loader.getController();
         String query =
-                "select x.id1, x.countryName, max(accumVacc), x.population, ((max(accumVacc)/2)/x.population)*100 as vaccinePerPopulation, x.countryRank as countryRank, x.times_visited\n"+
-        "from (\n"+
-                "Select cdcv.country_id as id1, daily_vaccinations as dV1,Date as Dr1, sum(daily_vaccinations) OVER (PARTITION BY cdcv.country_id ORDER BY Date) as accumVacc,\n"+
-                "population_by_country_2020.Population_2020 as population, from_country_to_id.Country as countryName, gdp_per_country.rank as countryRank, from_country_to_id.times_visited as times_visited\n"+
-                "From corona_data.country_vaccinations as cdcv, corona_data.from_country_to_id, corona_data.population_by_country_2020, corona_data.gdp_per_country\n"+
-                "where corona_data.from_country_to_id.COUNTRYID=cdcv.country_id AND corona_data.population_by_country_2020.country_id = cdcv.country_id AND cdcv.country_id= gdp_per_country.country_id) as x\n"+
-        "group by x.id1\n"+
-        "order by vaccinePerPopulation desc";
+                "select x.id1, x.countryName, max(accumVacc), x.population, ((max(accumVacc)/2)/x.population)*100 as vaccinePerPopulation, x.countryRank as countryRank, x.times_visited\n" +
+                        "from (\n" +
+                        "Select cdcv.country_id as id1, daily_vaccinations as dV1,Date as Dr1, sum(daily_vaccinations) OVER (PARTITION BY cdcv.country_id ORDER BY Date) as accumVacc,\n" +
+                        "population_by_country_2020.Population_2020 as population, from_country_to_id.Country as countryName, gdp_per_country.rank as countryRank, from_country_to_id.times_visited as times_visited\n" +
+                        "From corona_data.country_vaccinations as cdcv, corona_data.from_country_to_id, corona_data.population_by_country_2020, corona_data.gdp_per_country\n" +
+                        "where corona_data.from_country_to_id.COUNTRYID=cdcv.country_id AND corona_data.population_by_country_2020.country_id = cdcv.country_id AND cdcv.country_id= gdp_per_country.country_id) as x\n" +
+                        "group by x.id1\n" +
+                        "order by vaccinePerPopulation desc";
         System.out.println(query);
 
         dataDisplayController.headers = new ArrayList<String>();
@@ -251,34 +267,30 @@ public class MenuController extends Application {
         dataDisplayController.setColText(dataDisplayController.headers);
 
 
-
-
-        //System.out.println(query);
         this.connector = new Connect();
         this.connector.openConnection();
-        //dataDisplayController.tableMap = this.connector.callSQL(query,dataDisplayController.headers);
         //tableViewResults contains observable list of the values that should be displayed in the table
 
-        dataDisplayController.tableViewResult.setItems(this.connector.callSQL(query,dataDisplayController.headers));
+        dataDisplayController.tableViewResult.setItems(this.connector.callSQL(query, dataDisplayController.headers));
         //System.out.println(dataDisplayController.tableViewResult);
         dataDisplayController.displayQuery("Total percent of vaccinated people per country");
-        stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+        stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         scene = new Scene(root);
         stage.setScene(scene);
         stage.show();
 
     }
 
-    //DID VAC CORRECT AS GETSTRING!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    //returns which countries used pfizer vaccine
     public void countryPfizer(ActionEvent event) throws IOException {
         //sort by richest countries and show the total amount of sick people there are per country
         FXMLLoader loader = new FXMLLoader(getClass().getResource("data-display.fxml"));
-        root =loader.load();
+        root = loader.load();
         DataDisplayController dataDisplayController = loader.getController();
         String query =
-                "SELECT country_id, from_country_to_id.Country, vacc_correct\n"+
-        "FROM corona_data.type_vacc, corona_data.from_country_to_id\n"+
-        "where type_vacc.country_id = from_country_to_id.COUNTRYID AND vacc_correct = \'Pfizer/BioNTech\'";
+                "SELECT country_id, from_country_to_id.Country, vacc_correct\n" +
+                        "FROM corona_data.type_vacc, corona_data.from_country_to_id\n" +
+                        "where type_vacc.country_id = from_country_to_id.COUNTRYID AND vacc_correct = \'Pfizer/BioNTech\'";
 
         dataDisplayController.headers = new ArrayList<String>();
         dataDisplayController.headers.add("country_id");
@@ -293,28 +305,26 @@ public class MenuController extends Application {
         dataDisplayController.setColText(dataDisplayController.headers);
 
 
-
-
         //System.out.println(query);
         this.connector = new Connect();
         this.connector.openConnection();
         //dataDisplayController.tableMap = this.connector.callSQL(query,dataDisplayController.headers);
         //tableViewResults contains observable list of the values that should be displayed in the table
 
-        dataDisplayController.tableViewResult.setItems(this.connector.callSQL(query,dataDisplayController.headers));
+        dataDisplayController.tableViewResult.setItems(this.connector.callSQL(query, dataDisplayController.headers));
         //System.out.println(dataDisplayController.tableViewResult);
         dataDisplayController.displayQuery("Countries that used Pfizer");
-        stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+        stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         scene = new Scene(root);
         stage.setScene(scene);
         stage.show();
 
     }
-
+    //displays the richest most vaccinated country
     public void richestMostVacc(ActionEvent event) throws IOException {
         //sort by richest countries and show the total amount of sick people there are per country
         FXMLLoader loader = new FXMLLoader(getClass().getResource("data-display.fxml"));
-        root =loader.load();
+        root = loader.load();
         DataDisplayController dataDisplayController = loader.getController();
         String query =
                 "select w.id1, w.countryName,max(w.vaccinePerPopulation), w.population, w.countryRank, w.times_visited\n" +
@@ -348,17 +358,14 @@ public class MenuController extends Application {
 
 
 
-
-        //System.out.println(query);
         this.connector = new Connect();
         this.connector.openConnection();
-        //dataDisplayController.tableMap = this.connector.callSQL(query,dataDisplayController.headers);
         //tableViewResults contains observable list of the values that should be displayed in the table
 
-        dataDisplayController.tableViewResult.setItems(this.connector.callSQL(query,dataDisplayController.headers));
+        dataDisplayController.tableViewResult.setItems(this.connector.callSQL(query, dataDisplayController.headers));
         //System.out.println(dataDisplayController.tableViewResult);
         dataDisplayController.displayQuery("Richest most vaccinated country");
-        stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+        stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         scene = new Scene(root);
         stage.setScene(scene);
         stage.show();
