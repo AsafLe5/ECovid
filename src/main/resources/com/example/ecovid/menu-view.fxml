@@ -1,54 +1,109 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.Cursor?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.effect.Blend?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.paint.Color?>
 <?import javafx.scene.paint.RadialGradient?>
 <?import javafx.scene.paint.Stop?>
-<?import javafx.scene.shape.Line?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.ecovid.MenuController">
+<AnchorPane blendMode="SCREEN" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.ecovid.MenuController">
    <children>
-      <Label layoutX="237.0" layoutY="24.0" text="ECovid">
-         <font>
-            <Font name="Microsoft PhagsPa Bold" size="39.0" />
-         </font>
-         <textFill>
-            <RadialGradient centerX="0.5" centerY="0.5" radius="0.5">
-               <stops>
-                  <Stop>
-                     <color>
-                        <Color red="0.28514862060546875" green="0.027595030143857002" blue="0.9934210777282715" />
-                     </color>
-                  </Stop>
-                  <Stop offset="1.0">
-                     <color>
-                        <Color red="0.2750771641731262" green="0.19328702986240387" blue="0.5" />
-                     </color>
-                  </Stop>
-               </stops>
-            </RadialGradient>
-         </textFill>
-      </Label>
-      <Label layoutX="150.0" layoutY="81.0" text="So, how do you wanna plan your trip?">
-         <font>
-            <Font size="18.0" />
-         </font>
-      </Label>
-      <TextField fx:id="countryUpdate" layoutX="300.0" layoutY="133.0" promptText="Enter Country Name" />
-      <Button fx:id="okButton" layoutX="460.0" layoutY="152.0" mnemonicParsing="false" onAction="#update" text="Update Times Visited!" />
-      <Button fx:id="numCasesSortedWealth" layoutX="287.0" layoutY="333.0" mnemonicParsing="false" onAction="#numCasesSortedByWealth" text="number of cases sorted by countries wealth" />
-      <Button fx:id="buttonCovidSpreadMonth" layoutX="37.0" layoutY="283.0" mnemonicParsing="false" onAction="#covidSpreadMonth" text="Covid spread per country" />
-      <Button fx:id="vaccRateMonth" layoutX="39.0" layoutY="321.0" mnemonicParsing="false" onAction="#vaccRateMonth" text="Vaccine rate per country" />
-      <Button fx:id="totVaccPerCountry" layoutX="300.0" layoutY="295.0" mnemonicParsing="false" onAction="#totVacCountry" text="Total Vaccinations Percent per country" />
-      <Button fx:id="countryPhizer" layoutX="34.0" layoutY="234.0" mnemonicParsing="false" onAction="#countryPfizer" text="Countries who used Pfizer" />
-      <Button fx:id="richestMostVacc" layoutX="315.0" layoutY="246.0" mnemonicParsing="false" onAction="#richestMostVacc" text="Richest Most Vaccinated Country" />
-      <TextField fx:id="timesUpdate" layoutX="300.0" layoutY="175.0" promptText="Enter Times Visited" />
-      <Line endX="159.0" layoutX="443.0" layoutY="206.0" startX="-150.5" />
-      <Line endX="100.0" layoutX="193.0" layoutY="205.0" startX="100.0" startY="-92.0" />
-      <Line endX="159.0" layoutX="443.0" layoutY="113.0" startX="-150.5" />
+      <AnchorPane layoutY="171.0" prefHeight="233.0" prefWidth="600.0" style="-fx-background-color: #2e2B43;" AnchorPane.rightAnchor="0.0">
+         <children>
+            <ImageView fitHeight="200.0" fitWidth="207.0" layoutX="149.0" layoutY="11.0">
+               <image>
+                  <Image url="@../../../drawable/ecovid-plane-earth.png" />
+               </image>
+            </ImageView>
+            <Button fx:id="countryPhizer" layoutY="41.0" mnemonicParsing="false" onAction="#countryPfizer" style="-fx-background-color: #524A7A; -fx-background-radius: 0 30 30 0;" text="Countries who used Pfizer" textFill="WHITE">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Button>
+            <Button fx:id="buttonCovidSpreadMonth" layoutX="-1.0" layoutY="89.0" mnemonicParsing="false" onAction="#covidSpreadMonth" prefHeight="29.0" prefWidth="180.0" style="-fx-background-color: #524A7A; -fx-background-radius: 0 30 30 0;" text="Covid spread per country" textFill="WHITE">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Button>
+            <Button fx:id="vaccRateMonth" layoutX="-1.0" layoutY="135.0" mnemonicParsing="false" onAction="#vaccRateMonth" prefHeight="29.0" prefWidth="180.0" style="-fx-background-color: #524A7A; -fx-background-radius: 0 30 30 0;" text="Vaccine rate per country" textFill="WHITE">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Button>
+            <Button fx:id="totVaccPerCountry" alignment="BOTTOM_LEFT" contentDisplay="BOTTOM" layoutX="312.0" layoutY="89.0" mnemonicParsing="false" onAction="#totVacCountry" prefHeight="29.0" prefWidth="290.0" style="-fx-background-color: #524A7A; -fx-background-radius: 30 0 0 30;" text="Total Vaccinations Percent per country" textFill="WHITE">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Button>
+            <Button fx:id="numCasesSortedWealth" layoutX="312.0" layoutY="136.0" mnemonicParsing="false" onAction="#numCasesSortedByWealth" style="-fx-background-color: #524A7A; -fx-background-radius: 30 0 0 30;" text="Number of cases sorted by countries wealth" textFill="WHITE">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Button>
+            <Button fx:id="richestMostVacc" alignment="BOTTOM_LEFT" layoutX="314.0" layoutY="41.0" mnemonicParsing="false" onAction="#richestMostVacc" prefHeight="29.0" prefWidth="288.0" style="-fx-background-color: #524A7A; -fx-background-radius: 30 0 0 30;" text="Richest Most Vaccinated Country" textFill="WHITE" textOverrun="LEADING_ELLIPSIS">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Button>
+         </children>
+         <opaqueInsets>
+            <Insets />
+         </opaqueInsets></AnchorPane>
+      <AnchorPane prefHeight="107.0" prefWidth="600.0" style="-fx-background-color: #F92B55;">
+         <children>
+            <ImageView blendMode="SRC_ATOP" fitHeight="61.0" fitWidth="62.0" layoutX="402.0" layoutY="7.0" rotate="40.9">
+               <image>
+                  <Image url="@../../../drawable/ecovid-logo.png" />
+               </image>
+            </ImageView>
+            <Label layoutX="140.0" layoutY="66.0" text="So, how do you wanna plan your trip?" textFill="WHITE">
+               <font>
+                  <Font name="System Bold" size="18.0" />
+               </font>
+            </Label>
+            <Label layoutX="210.0" layoutY="17.0" text="E C o v i d">
+               <font>
+                  <Font name="Microsoft PhagsPa Bold" size="39.0" />
+               </font>
+               <textFill>
+                  <RadialGradient centerX="0.5" centerY="0.5" radius="0.5">
+                     <stops>
+                        <Stop>
+                           <color>
+                              <Color red="0.8059210777282715" green="0.7982456088066101" blue="0.8289473652839661" />
+                           </color>
+                        </Stop>
+                        <Stop offset="1.0">
+                           <color>
+                              <Color red="1.0" green="1.0" blue="1.0" />
+                           </color>
+                        </Stop>
+                     </stops>
+                  </RadialGradient>
+               </textFill>
+            </Label>
+         </children>
+      </AnchorPane>
+      <AnchorPane accessibleRole="RADIO_BUTTON" blendMode="DARKEN" centerShape="false" layoutY="104.0" prefHeight="68.0" prefWidth="600.0" style="-fx-background-color: #393252;" styleClass="-fx" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="104.0">
+         <cursor>
+            <Cursor fx:constant="H_RESIZE" />
+         </cursor>
+         <effect>
+            <Blend />
+         </effect>
+         <children>
+            <Button fx:id="okButton" layoutX="410.0" layoutY="22.0" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" onAction="#update" prefHeight="25.0" prefWidth="179.0" style="-fx-background-color: #524A7A; -fx-background-radius: 30 30 30 30;" styleClass="bac" text="Update Times Visited!" textFill="WHITE" />
+         </children>
+      </AnchorPane>
+      <TextField fx:id="countryUpdate" layoutX="23.0" layoutY="127.0" prefHeight="25.0" prefWidth="179.0" promptText="Enter Country Name" />
+      <TextField fx:id="timesUpdate" layoutX="218.0" layoutY="127.0" prefHeight="25.0" prefWidth="179.0" promptText="Enter Times Visited" />
    </children>
 </AnchorPane>
