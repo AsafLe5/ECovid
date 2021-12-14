@@ -30,7 +30,7 @@ public class MenuController extends Application {
 
             FXMLLoader fxmlLoader = new FXMLLoader(MenuController.class.getResource("menu-view.fxml"));
             Scene scene = new Scene(fxmlLoader.load());
-            stage.setTitle("Hello!");
+            stage.setTitle("Welcome to ECovid!");
             stage.setScene(scene);
             stage.show();
         } catch (Exception e) {
@@ -47,11 +47,13 @@ public class MenuController extends Application {
             stage.setScene(scene);
             stage.show();
 
-        }
+    }
+
+
 
         System.out.println(this.connector);
-        //runMenu();
-    }
+    //runMenu();
+}
 
     private void runMenu() throws IOException {
 
@@ -73,7 +75,6 @@ public class MenuController extends Application {
                         "where Country = \'" + countryName + "\'";
 
 
-
         this.connector = new Connect();
         this.connector.openConnection();
         //update the table with update query, see if the update worked
@@ -89,6 +90,7 @@ public class MenuController extends Application {
         stage.setScene(scene);
         stage.show();
     }
+
     //sort by richest countries and show the total amount of sick people there are per country
     public void numCasesSortedByWealth(ActionEvent event) throws IOException {
 
@@ -137,6 +139,7 @@ public class MenuController extends Application {
         stage.show();
 
     }
+
     /*
     displays covid spread per month in 20 countries
 -- user will have 3 buttons, one for rich, middle, poor and based on that we'll put a string of either:
@@ -320,6 +323,7 @@ public class MenuController extends Application {
         stage.show();
 
     }
+
     //displays the richest most vaccinated country
     public void richestMostVacc(ActionEvent event) throws IOException {
         //sort by richest countries and show the total amount of sick people there are per country
@@ -355,7 +359,6 @@ public class MenuController extends Application {
         dataDisplayController.c6.setCellValueFactory(new PropertyValueFactory<>("att6"));
 
         dataDisplayController.setColText(dataDisplayController.headers);
-
 
 
         this.connector = new Connect();

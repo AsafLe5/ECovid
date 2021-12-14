@@ -27,31 +27,18 @@ public class Connect {
         System.out.println("Driver loaded successfully");
         System.out.print("Trying to connect... ");
 
-        /*
+
         Scanner sc = new Scanner(new File("conf.csv"));
         sc.useDelimiter(",");   //sets the delimiter pattern
         //read info from conf file
         // creating the connection
         String host = sc.next().toString();
-        System.out.println("host:"+host.equals("localhost"));
         String port = sc.next().toString();
-        System.out.println("host:"+port.equals("3306"));
         String schema = sc.next().toString();
-        System.out.println("host:"+schema.equals("corona_data"));
         String user = sc.next().toString();
-        System.out.println("host:"+user.equals("root"));
         String password = sc.next().toString();
-        System.out.println("host:"+password.equals("#gL!P3NC2?msA9="));
-        System.out.println("password:"+password);
         sc.close();
-        */
-        String host = "localhost";
-        String port = "3306";
-        String schema = "corona_data";
-        String user = "root";
-        String password = "#gL!P3NC2?msA9=";
-
-
+        
 
         try {
             System.out.println("trying to connect");
