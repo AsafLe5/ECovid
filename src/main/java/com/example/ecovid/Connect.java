@@ -1,5 +1,6 @@
 package com.example.ecovid;
 //package DB;
+
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
@@ -16,7 +17,8 @@ import static java.lang.String.valueOf;
 
 public class Connect {
     Connection conn; // DB connection
-    public boolean openConnection() throws FileNotFoundException {
+
+    public boolean openConnection() {
         // loading the driver
         try {
             Class.forName("com.mysql.jdbc.Driver");
@@ -26,19 +28,26 @@ public class Connect {
         }
         System.out.println("Driver loaded successfully");
         System.out.print("Trying to connect... ");
+        String host="";
+        String port="";
+        String schema="";
+        String user="";
+        String password="";
+        try {
+            Scanner sc = new Scanner(new File("conf.csv"));
+            sc.useDelimiter(",");   //sets the delimiter pattern
+            //read info from conf file
+            // creating the connection
+            host = sc.next().toString();
+            port = sc.next().toString();
+            schema = sc.next().toString();
+            user = sc.next().toString();
+            password = sc.next().toString();
+            sc.close();
+        } catch (Exception e) {
+            return false;
+        }
 
-
-        Scanner sc = new Scanner(new File("conf.csv"));
-        sc.useDelimiter(",");   //sets the delimiter pattern
-        //read info from conf file
-        // creating the connection
-        String host = sc.next().toString();
-        String port = sc.next().toString();
-        String schema = sc.next().toString();
-        String user = sc.next().toString();
-        String password = sc.next().toString();
-        sc.close();
-        
 
         try {
             System.out.println("trying to connect");
@@ -50,12 +59,13 @@ public class Connect {
         }
         System.out.println("Connected!");
         return true;
+
     }
 
     //returns the value of rs from the query result
     private String getRsVal(String header, ResultSet rs, int index) throws SQLException {
-        String val="";
-        switch (header){
+        String val = "";
+        switch (header) {
 
             case "vacc_correct":
             case "Country":
@@ -92,7 +102,7 @@ public class Connect {
         return val;
     }
 
-    public ObservableList<ModelTable> callSQL(String query,List<String> headers) {
+    public ObservableList<ModelTable> callSQL(String query, List<String> headers) {
 
         //HashMap<String,List<String>> resMap = new HashMap<>();
         //the observable list will hold headers and rows
@@ -103,9 +113,9 @@ public class Connect {
             //open up the query line by line
             while (rs.next()) {
                 line = new ArrayList<>();
-                for (int i = 0; i<headers.size();i++){
+                for (int i = 0; i < headers.size(); i++) {
                     //add each line to lines array
-                    line.add(getRsVal(headers.get(i),rs,i));
+                    line.add(getRsVal(headers.get(i), rs, i));
 
                 }
                 //once done, set the lines array to the observible list.
@@ -131,6 +141,7 @@ public class Connect {
         }
 
     }
+
     //update query returns if update succeded or not
     public boolean queryUpdate(String query) {
         try (Statement stmt = conn.createStatement();) {

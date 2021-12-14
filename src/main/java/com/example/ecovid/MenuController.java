@@ -23,6 +23,7 @@ public class MenuController extends Application {
     private Stage stage;
     private Scene scene;
     private Connect connector;
+    private Object obj;
 
     @Override
     public void start(Stage stage) throws IOException {
@@ -36,9 +37,10 @@ public class MenuController extends Application {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        this.connector = new Connect();
+        this.connector = myConnection.getConnObj();
+        System.out.println(this.connector);
         //if the connection failed, display appropriate message
-        if (!this.connector.openConnection()) {
+      if (this.connector == null) {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("data-display.fxml"));
             root = loader.load();
             DataDisplayController dataDisplayController = loader.getController();
@@ -48,10 +50,8 @@ public class MenuController extends Application {
             stage.show();
 
     }
-
-
-
-        System.out.println(this.connector);
+        /*this.connector.openConnection();
+        System.out.println("this.connector :"+this.connector);*/
     //runMenu();
 }
 
@@ -75,8 +75,7 @@ public class MenuController extends Application {
                         "where Country = \'" + countryName + "\'";
 
 
-        this.connector = new Connect();
-        this.connector.openConnection();
+        this.connector = myConnection.getConnObj();
         //update the table with update query, see if the update worked
         boolean worked = this.connector.queryUpdate(query);
         //System.out.println(dataDisplayController.tableViewResult);
@@ -122,10 +121,10 @@ public class MenuController extends Application {
 
         dataDisplayController.setColText(dataDisplayController.headers);
 
-
+        this.connector = myConnection.getConnObj();
         //System.out.println(query);
-        this.connector = new Connect();
-        this.connector.openConnection();
+        /*this.connector = new Connect();
+        this.connector.openConnection();*/
         //dataDisplayController.tableMap = this.connector.callSQL(query,dataDisplayController.headers);
         //tableViewResults contains observable list of the values that should be displayed in the table
 
@@ -169,8 +168,7 @@ public class MenuController extends Application {
         countryWealthOptionsController.headers.add("sum(NewCassesPerPop)/20");
         countryWealthOptionsController.headers.add("sum(w.population)");
         countryWealthOptionsController.headers.add("curYear");
-        this.connector = new Connect();
-        this.connector.openConnection();
+        this.connector = myConnection.getConnObj();
         countryWealthOptionsController.connection = this.connector;
         countryWealthOptionsController.queryPart1 = queryPart1;
         countryWealthOptionsController.queryPart2 = queryPart2;
@@ -219,8 +217,7 @@ public class MenuController extends Application {
         countryWealthOptionsController.headers.add("sum(accumVacc)");
         countryWealthOptionsController.headers.add("sum(w.population)");
         countryWealthOptionsController.headers.add("sum(NewVacPerPop)/40");
-        this.connector = new Connect();
-        this.connector.openConnection();
+        this.connector = myConnection.getConnObj();
         countryWealthOptionsController.connection = this.connector;
         countryWealthOptionsController.queryPart1 = queryPart1;
         countryWealthOptionsController.queryPart2 = queryPart2;
@@ -248,7 +245,6 @@ public class MenuController extends Application {
                         "where corona_data.from_country_to_id.COUNTRYID=cdcv.country_id AND corona_data.population_by_country_2020.country_id = cdcv.country_id AND cdcv.country_id= gdp_per_country.country_id) as x\n" +
                         "group by x.id1\n" +
                         "order by vaccinePerPopulation desc";
-        System.out.println(query);
 
         dataDisplayController.headers = new ArrayList<String>();
         dataDisplayController.headers.add("id1");
@@ -269,9 +265,7 @@ public class MenuController extends Application {
 
         dataDisplayController.setColText(dataDisplayController.headers);
 
-
-        this.connector = new Connect();
-        this.connector.openConnection();
+        this.connector = myConnection.getConnObj();
         //tableViewResults contains observable list of the values that should be displayed in the table
 
         dataDisplayController.tableViewResult.setItems(this.connector.callSQL(query, dataDisplayController.headers));
@@ -309,8 +303,7 @@ public class MenuController extends Application {
 
 
         //System.out.println(query);
-        this.connector = new Connect();
-        this.connector.openConnection();
+        this.connector = myConnection.getConnObj();
         //dataDisplayController.tableMap = this.connector.callSQL(query,dataDisplayController.headers);
         //tableViewResults contains observable list of the values that should be displayed in the table
 
@@ -361,8 +354,7 @@ public class MenuController extends Application {
         dataDisplayController.setColText(dataDisplayController.headers);
 
 
-        this.connector = new Connect();
-        this.connector.openConnection();
+        this.connector = myConnection.getConnObj();
         //tableViewResults contains observable list of the values that should be displayed in the table
 
         dataDisplayController.tableViewResult.setItems(this.connector.callSQL(query, dataDisplayController.headers));
