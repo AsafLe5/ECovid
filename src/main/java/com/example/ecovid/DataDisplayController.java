@@ -2,20 +2,32 @@ package com.example.ecovid;
 
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.stage.Stage;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 
 public class DataDisplayController implements Initializable {
+
+    public Connect connection;
+    private Parent root;
+    private Stage stage;
+    private Scene scene;
     @FXML
     TableView<ModelTable> tableViewResult;
     @FXML
@@ -95,8 +107,20 @@ public class DataDisplayController implements Initializable {
         }
     }
 
+    public void backToMenu(ActionEvent event) throws IOException {
+        if (myConnection.getConnObj() != null) { //to remove this
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("menu-view.fxml"));
+            root = loader.load();
+            stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            scene = new Scene(root);
+            stage.setScene(scene);
+            stage.show();
+        }
+    }
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
 
     }
+
 }

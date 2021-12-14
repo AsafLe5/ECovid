@@ -33,12 +33,13 @@ public class MenuController extends Application {
             Scene scene = new Scene(fxmlLoader.load());
             stage.setTitle("Welcome to ECovid!");
             stage.setScene(scene);
+            stage.setResizable(false);
             stage.show();
+
         } catch (Exception e) {
             e.printStackTrace();
         }
         this.connector = myConnection.getConnObj();
-        System.out.println(this.connector);
         //if the connection failed, display appropriate message
       if (this.connector == null) {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("data-display.fxml"));
@@ -292,7 +293,6 @@ public class MenuController extends Application {
         dataDisplayController.headers = new ArrayList<String>();
         dataDisplayController.headers.add("country_id");
         dataDisplayController.headers.add("Country");
-        //DID VAC CORRECT AS GETSTRING!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         dataDisplayController.headers.add("vacc_correct");
 
         dataDisplayController.c1.setCellValueFactory(new PropertyValueFactory<>("att1"));
@@ -308,7 +308,6 @@ public class MenuController extends Application {
         //tableViewResults contains observable list of the values that should be displayed in the table
 
         dataDisplayController.tableViewResult.setItems(this.connector.callSQL(query, dataDisplayController.headers));
-        //System.out.println(dataDisplayController.tableViewResult);
         dataDisplayController.displayQuery("Countries that used Pfizer");
         stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         scene = new Scene(root);
@@ -365,6 +364,12 @@ public class MenuController extends Application {
         stage.setScene(scene);
         stage.show();
 
+    }
+
+    @Override
+    public void stop(){
+        System.out.println("Closing connection");
+        myConnection.closeConnObj();
     }
 
     public static void main(String[] args) {
