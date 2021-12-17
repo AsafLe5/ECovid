@@ -42,18 +42,15 @@ public class MenuController extends Application {
         this.connector = myConnection.getConnObj();
         //if the connection failed, display appropriate message
       if (this.connector == null) {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("data-display.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("error-display.fxml"));
             root = loader.load();
-            DataDisplayController dataDisplayController = loader.getController();
-            dataDisplayController.displayQuery("Unable to connect to MySQL, check conf.csv is OK");
+            ErrorDisplayController errorDisplayController = loader.getController();
+            errorDisplayController.setErrorDescription("Unable to connect to MySQL, check conf.csv is OK");
             scene = new Scene(root);
             stage.setScene(scene);
             stage.show();
 
     }
-        /*this.connector.openConnection();
-        System.out.println("this.connector :"+this.connector);*/
-    //runMenu();
 }
 
     private void runMenu() throws IOException {
@@ -364,6 +361,15 @@ public class MenuController extends Application {
         stage.setScene(scene);
         stage.show();
 
+    }
+
+    public  void helpButton(ActionEvent event) throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("info-view.fxml"));
+        root = loader.load();
+        stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+        scene = new Scene(root);
+        stage.setScene(scene);
+        stage.show();
     }
 
     @Override
