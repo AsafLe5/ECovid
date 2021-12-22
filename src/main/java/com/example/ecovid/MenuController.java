@@ -46,7 +46,9 @@ public class MenuController extends Application {
             root = loader.load();
             ErrorDisplayController errorDisplayController = loader.getController();
             errorDisplayController.setErrorDescription("Unable to connect to MySQL, check conf.csv is OK");
-            scene = new Scene(root);
+          //stage = (Stage) ((Node) .getSource()).getScene().getWindow();
+
+          scene = new Scene(root);
             stage.setScene(scene);
             stage.show();
 

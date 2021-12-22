@@ -1,11 +1,14 @@
 package com.example.ecovid;
 
+import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 
 public class ErrorDisplayController {
-    Label errorDescription;
+    @FXML
+    Label errorLine=new Label();
 
-    public void setErrorDescription(String errorDescription) {
-        this.errorDescription.setText(errorDescription);
+    public void setErrorDescription(String myErrorDescription) {
+        this.errorLine.setText(myErrorDescription);
     }
 }
+
