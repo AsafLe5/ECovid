@@ -68,19 +68,31 @@ public class MenuController extends Application {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("data-display.fxml"));
         root = loader.load();
         DataDisplayController dataDisplayController = loader.getController();
+        //query to see which country was updated if it was
+        String existsquery = "SELECT Country\n" +
+                "FROM corona_data.from_country_to_id\n" +
+                "where Country = \'" + countryName + "\'";
         //set query
         String query =
                 "Update corona_data.from_country_to_id\n" +
                         "set times_visited = " + times + "\n" +
                         "where Country = \'" + countryName + "\'";
+        //display the updated country. If none were, the display will be blank
+        dataDisplayController.headers = new ArrayList<String>();
+        dataDisplayController.headers.add("Country");
+
+        //set the colomns to be the attributes
+        dataDisplayController.c1.setCellValueFactory(new PropertyValueFactory<>("att1"));
+        dataDisplayController.setColText(dataDisplayController.headers);
 
 
         this.connector = myConnection.getConnObj();
+        dataDisplayController.tableViewResult.setItems(this.connector.callSQL(existsquery, dataDisplayController.headers));
         //update the table with update query, see if the update worked
         boolean worked = this.connector.queryUpdate(query);
         //System.out.println(dataDisplayController.tableViewResult);
         if (worked) {
-            dataDisplayController.displayQuery("Successfully Updated!");
+            dataDisplayController.displayQuery("The following country was updated");
         } else {
             dataDisplayController.displayQuery("Update failed. Confirm information submitted is correct");
         }
@@ -373,7 +385,299 @@ public class MenuController extends Application {
         stage.setScene(scene);
         stage.show();
     }
+    public void unvisitedCountries(ActionEvent event) throws IOException {
 
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("data-display.fxml"));
+        root = loader.load();
+        DataDisplayController dataDisplayController = loader.getController();
+        String query =
+                "SELECT Country\n" +
+                        "FROM corona_data.from_country_to_id\n" +
+                        "where times_visited = 0";
+        //these are the titles of each colomn that will be returned from the query
+        dataDisplayController.headers = new ArrayList<String>();
+        dataDisplayController.headers.add("Country");
+
+        //set the colomns to be the attributes
+        dataDisplayController.c1.setCellValueFactory(new PropertyValueFactory<>("att1"));
+
+        dataDisplayController.setColText(dataDisplayController.headers);
+
+        this.connector = myConnection.getConnObj();
+        //System.out.println(query);
+        /*this.connector = new Connect();
+        this.connector.openConnection();*/
+        //dataDisplayController.tableMap = this.connector.callSQL(query,dataDisplayController.headers);
+        //tableViewResults contains observable list of the values that should be displayed in the table
+
+        //put the results in the table
+        dataDisplayController.tableViewResult.setItems(this.connector.callSQL(query, dataDisplayController.headers));
+        //System.out.println(dataDisplayController.tableViewResult);
+        dataDisplayController.displayQuery("Countries you haven't visited yet");
+        stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        scene = new Scene(root);
+        stage.setScene(scene);
+        stage.show();
+
+    }
+    public void countriesTimesVisit(ActionEvent event) throws IOException {
+
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("data-display.fxml"));
+        root = loader.load();
+        DataDisplayController dataDisplayController = loader.getController();
+        String query =
+                "SELECT Country, times_visited\n" +
+                        "FROM corona_data.from_country_to_id";
+        //these are the titles of each colomn that will be returned from the query
+        dataDisplayController.headers = new ArrayList<String>();
+        dataDisplayController.headers.add("Country");
+        dataDisplayController.headers.add("times_visited");
+
+        //set the colomns to be the attributes
+        dataDisplayController.c1.setCellValueFactory(new PropertyValueFactory<>("att1"));
+        dataDisplayController.c2.setCellValueFactory(new PropertyValueFactory<>("att2"));
+
+        dataDisplayController.setColText(dataDisplayController.headers);
+
+        this.connector = myConnection.getConnObj();
+        //System.out.println(query);
+        /*this.connector = new Connect();
+        this.connector.openConnection();*/
+        //dataDisplayController.tableMap = this.connector.callSQL(query,dataDisplayController.headers);
+        //tableViewResults contains observable list of the values that should be displayed in the table
+
+        //put the results in the table
+        dataDisplayController.tableViewResult.setItems(this.connector.callSQL(query, dataDisplayController.headers));
+        //System.out.println(dataDisplayController.tableViewResult);
+        dataDisplayController.displayQuery("Countries and Times Visited");
+        stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        scene = new Scene(root);
+        stage.setScene(scene);
+        stage.show();
+
+    }
+    public void randCountry(ActionEvent event) throws IOException {
+
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("data-display.fxml"));
+        root = loader.load();
+        DataDisplayController dataDisplayController = loader.getController();
+        String query =
+                "select x.id1, x.countryName, max(accumVacc), x.population, ((max(accumVacc)/2)/x.population)*100 as vaccinePerPopulation, x.countryRank as countryRank, x.times_visited\n"+
+        "from (\n"+
+                "Select cdcv.country_id as id1, daily_vaccinations as dV1,Date as Dr1, sum(daily_vaccinations) OVER (PARTITION BY cdcv.country_id ORDER BY Date) as accumVacc,"+
+                "population_by_country_2020.Population_2020 as population, from_country_to_id.Country as countryName, gdp_per_country.rank as countryRank, from_country_to_id.times_visited as times_visited\n"+
+                "From corona_data.country_vaccinations as cdcv, corona_data.from_country_to_id, corona_data.population_by_country_2020, corona_data.gdp_per_country\n"+
+                "where corona_data.from_country_to_id.COUNTRYID=cdcv.country_id AND corona_data.population_by_country_2020.country_id = cdcv.country_id AND cdcv.country_id= gdp_per_country.country_id) as x\n"+
+        "group by x.id1\n"+
+        "order by Rand(),vaccinePerPopulation desc\n"+
+        "Limit 1";
+        //these are the titles of each colomn that will be returned from the query
+        dataDisplayController.headers = new ArrayList<String>();
+        dataDisplayController.headers.add("id1");
+        dataDisplayController.headers.add("countryName");
+        dataDisplayController.headers.add("max(accumVacc)");
+        dataDisplayController.headers.add("population");
+        dataDisplayController.headers.add("vaccinePerPopulation");
+        dataDisplayController.headers.add("countryRank");
+        dataDisplayController.headers.add("times_visited");
+
+        dataDisplayController.c1.setCellValueFactory(new PropertyValueFactory<>("att1"));
+        dataDisplayController.c2.setCellValueFactory(new PropertyValueFactory<>("att2"));
+        dataDisplayController.c3.setCellValueFactory(new PropertyValueFactory<>("att3"));
+        dataDisplayController.c4.setCellValueFactory(new PropertyValueFactory<>("att4"));
+        dataDisplayController.c5.setCellValueFactory(new PropertyValueFactory<>("att5"));
+        dataDisplayController.c6.setCellValueFactory(new PropertyValueFactory<>("att6"));
+        dataDisplayController.c7.setCellValueFactory(new PropertyValueFactory<>("att7"));
+
+        dataDisplayController.setColText(dataDisplayController.headers);
+
+        this.connector = myConnection.getConnObj();
+        //System.out.println(query);
+        /*this.connector = new Connect();
+        this.connector.openConnection();*/
+        //dataDisplayController.tableMap = this.connector.callSQL(query,dataDisplayController.headers);
+        //tableViewResults contains observable list of the values that should be displayed in the table
+
+        //put the results in the table
+        dataDisplayController.tableViewResult.setItems(this.connector.callSQL(query, dataDisplayController.headers));
+        //System.out.println(dataDisplayController.tableViewResult);
+        dataDisplayController.displayQuery("Your next destination is:");
+        stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        scene = new Scene(root);
+        stage.setScene(scene);
+        stage.show();
+
+    }
+    public void totalVaccWorld(ActionEvent event) throws IOException {
+
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("data-display.fxml"));
+        root = loader.load();
+        DataDisplayController dataDisplayController = loader.getController();
+        String query = "select sum(daily_vaccinations) as Total_vaccines\n" +
+                "from corona_data.country_vaccinations";
+        //these are the titles of each colomn that will be returned from the query
+        dataDisplayController.headers = new ArrayList<String>();
+        dataDisplayController.headers.add("Total_vaccines");
+
+        dataDisplayController.c1.setCellValueFactory(new PropertyValueFactory<>("att1"));
+
+        dataDisplayController.setColText(dataDisplayController.headers);
+
+        this.connector = myConnection.getConnObj();
+        //System.out.println(query);
+        /*this.connector = new Connect();
+        this.connector.openConnection();*/
+        //dataDisplayController.tableMap = this.connector.callSQL(query,dataDisplayController.headers);
+        //tableViewResults contains observable list of the values that should be displayed in the table
+
+        //put the results in the table
+        dataDisplayController.tableViewResult.setItems(this.connector.callSQL(query, dataDisplayController.headers));
+        //System.out.println(dataDisplayController.tableViewResult);
+        dataDisplayController.displayQuery("Total vaccines worldwide");
+        stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        scene = new Scene(root);
+        stage.setScene(scene);
+        stage.show();
+
+    }
+    public void totalDeathsWorld(ActionEvent event) throws IOException {
+
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("data-display.fxml"));
+        root = loader.load();
+        DataDisplayController dataDisplayController = loader.getController();
+        String query = "select sum(New_deaths) as Total_Deaths\n" +
+                "from corona_data.corona_cases";
+        //these are the titles of each colomn that will be returned from the query
+        dataDisplayController.headers = new ArrayList<String>();
+        dataDisplayController.headers.add("Total_Deaths");
+
+        dataDisplayController.c1.setCellValueFactory(new PropertyValueFactory<>("att1"));
+
+        dataDisplayController.setColText(dataDisplayController.headers);
+
+        this.connector = myConnection.getConnObj();
+        //System.out.println(query);
+        /*this.connector = new Connect();
+        this.connector.openConnection();*/
+        //dataDisplayController.tableMap = this.connector.callSQL(query,dataDisplayController.headers);
+        //tableViewResults contains observable list of the values that should be displayed in the table
+
+        //put the results in the table
+        dataDisplayController.tableViewResult.setItems(this.connector.callSQL(query, dataDisplayController.headers));
+        //System.out.println(dataDisplayController.tableViewResult);
+        dataDisplayController.displayQuery("Total deaths worldwide");
+        stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        scene = new Scene(root);
+        stage.setScene(scene);
+        stage.show();
+
+    }
+    public void tenRich(ActionEvent event) throws IOException {
+
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("data-display.fxml"));
+        root = loader.load();
+        DataDisplayController dataDisplayController = loader.getController();
+        String query = "SELECT  from_country_to_id.Country, gdp_per_country.rank\n" +
+                "FROM corona_data.from_country_to_id, corona_data.gdp_per_country\n" +
+                "where gdp_per_country.country_id = from_country_to_id.COUNTRYID\n" +
+                "order by gdp_per_country.rank\n" +
+                "Limit 10";
+        //these are the titles of each colomn that will be returned from the query
+        dataDisplayController.headers = new ArrayList<String>();
+        dataDisplayController.headers.add("Country");
+        dataDisplayController.headers.add("rank");
+
+        dataDisplayController.c1.setCellValueFactory(new PropertyValueFactory<>("att1"));
+        dataDisplayController.c2.setCellValueFactory(new PropertyValueFactory<>("att2"));
+
+        dataDisplayController.setColText(dataDisplayController.headers);
+
+        this.connector = myConnection.getConnObj();
+        //System.out.println(query);
+        /*this.connector = new Connect();
+        this.connector.openConnection();*/
+        //dataDisplayController.tableMap = this.connector.callSQL(query,dataDisplayController.headers);
+        //tableViewResults contains observable list of the values that should be displayed in the table
+
+        //put the results in the table
+        dataDisplayController.tableViewResult.setItems(this.connector.callSQL(query, dataDisplayController.headers));
+        //System.out.println(dataDisplayController.tableViewResult);
+        dataDisplayController.displayQuery("Top 10 richest country");
+        stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        scene = new Scene(root);
+        stage.setScene(scene);
+        stage.show();
+
+    }
+    public void tenLargePop(ActionEvent event) throws IOException {
+
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("data-display.fxml"));
+        root = loader.load();
+        DataDisplayController dataDisplayController = loader.getController();
+        String query = "SELECT  from_country_to_id.Country, population_by_country_2020.Population_2020 as Population\n" +
+                "FROM corona_data.from_country_to_id, corona_data.population_by_country_2020\n" +
+                "where population_by_country_2020.country_id = from_country_to_id.COUNTRYID\n" +
+                "order by Population desc\n" +
+                "Limit 10";
+        //these are the titles of each colomn that will be returned from the query
+        dataDisplayController.headers = new ArrayList<String>();
+        dataDisplayController.headers.add("Country");
+        dataDisplayController.headers.add("Population");
+
+        dataDisplayController.c1.setCellValueFactory(new PropertyValueFactory<>("att1"));
+        dataDisplayController.c2.setCellValueFactory(new PropertyValueFactory<>("att2"));
+
+        dataDisplayController.setColText(dataDisplayController.headers);
+
+        this.connector = myConnection.getConnObj();
+        //System.out.println(query);
+        /*this.connector = new Connect();
+        this.connector.openConnection();*/
+        //dataDisplayController.tableMap = this.connector.callSQL(query,dataDisplayController.headers);
+        //tableViewResults contains observable list of the values that should be displayed in the table
+
+        //put the results in the table
+        dataDisplayController.tableViewResult.setItems(this.connector.callSQL(query, dataDisplayController.headers));
+        //System.out.println(dataDisplayController.tableViewResult);
+        dataDisplayController.displayQuery("10 countries with largest population");
+        stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        scene = new Scene(root);
+        stage.setScene(scene);
+        stage.show();
+
+    }
+    public void lastUpVacc(ActionEvent event) throws IOException {
+
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("data-display.fxml"));
+        root = loader.load();
+        DataDisplayController dataDisplayController = loader.getController();
+        String query = "select max(country_vaccinations.date) as Last_updated\n" +
+                "from corona_data.country_vaccinations";
+        //these are the titles of each colomn that will be returned from the query
+        dataDisplayController.headers = new ArrayList<String>();
+        dataDisplayController.headers.add("Last_updated");
+
+        dataDisplayController.c1.setCellValueFactory(new PropertyValueFactory<>("att1"));
+
+        dataDisplayController.setColText(dataDisplayController.headers);
+
+        this.connector = myConnection.getConnObj();
+        //System.out.println(query);
+        /*this.connector = new Connect();
+        this.connector.openConnection();*/
+        //dataDisplayController.tableMap = this.connector.callSQL(query,dataDisplayController.headers);
+        //tableViewResults contains observable list of the values that should be displayed in the table
+
+        //put the results in the table
+        dataDisplayController.tableViewResult.setItems(this.connector.callSQL(query, dataDisplayController.headers));
+        //System.out.println(dataDisplayController.tableViewResult);
+        dataDisplayController.displayQuery("10 countries with largest population");
+        stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        scene = new Scene(root);
+        stage.setScene(scene);
+        stage.show();
+
+    }
     @Override
     public void stop(){
         System.out.println("Closing connection");

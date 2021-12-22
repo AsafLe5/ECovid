@@ -36,6 +36,11 @@
                   </ImageView>
                </graphic>
             </Button>
+            <Button fx:id="totalVaccWorld" layoutX="564.0" layoutY="330.0" mnemonicParsing="false" onAction="#totalVaccWorld" prefHeight="30.0" prefWidth="287.0" style="-fx-background-color: #524A7A; -fx-background-radius: 30 0 0 30;" text="Total vaccines distributed worldwide" textFill="WHITE">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Button>
          </children></AnchorPane>
       <AnchorPane layoutY="88.0" prefHeight="80.0" prefWidth="600.0" style="-fx-background-color: #393252;" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
          <children>
@@ -116,6 +121,41 @@
          </font>
       </Button>
       <Button fx:id="richestMostVacc" alignment="TOP_LEFT" layoutX="313.0" layoutY="225.0" mnemonicParsing="false" onAction="#richestMostVacc" prefHeight="30.0" prefWidth="287.0" style="-fx-background-color: #524A7A; -fx-background-radius: 30 0 0 30;" text="Richest Most Vaccinated Country" textFill="WHITE" AnchorPane.rightAnchor="0.0">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </Button>
+      <Button fx:id="countriesTimesVisit" layoutX="563.0" layoutY="366.0" mnemonicParsing="false" onAction="#countriesTimesVisit" prefHeight="30.0" prefWidth="287.0" style="-fx-background-color: #524A7A; -fx-background-radius: 30 0 0 30;" text="List of countries and times visited" textFill="WHITE">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </Button>
+      <Button fx:id="unvisitedCountries" layoutX="566.0" layoutY="410.0" mnemonicParsing="false" onAction="#unvisitedCountries" prefHeight="30.0" prefWidth="287.0" style="-fx-background-color: #524A7A; -fx-background-radius: 30 0 0 30;" text="Countries that you haven't visited yet" textFill="WHITE">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </Button>
+      <Button fx:id="tenLargePop" layoutX="563.0" layoutY="452.0" mnemonicParsing="false" onAction="#tenLargePop" prefHeight="30.0" prefWidth="287.0" style="-fx-background-color: #524A7A; -fx-background-radius: 30 0 0 30;" text=" 10 countries with the largest population" textFill="WHITE">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </Button>
+      <Button fx:id="randCountry" layoutX="-6.0" layoutY="461.0" mnemonicParsing="false" onAction="#randCountry" prefHeight="30.0" prefWidth="184.0" style="-fx-background-color: #524A7A; -fx-background-radius: 0 30 30 0;" text="Get a random country" textFill="WHITE">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </Button>
+      <Button fx:id="lastUpVacc" layoutX="-4.0" layoutY="508.0" mnemonicParsing="false" onAction="#lastUpVacc" prefHeight="30.0" prefWidth="179.0" style="-fx-background-color: #524A7A; -fx-background-radius: 0 30 30 0;" text="Last Updated Vaccine" textFill="WHITE">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </Button>
+      <Button fx:id="tenRich" layoutY="414.0" mnemonicParsing="false" onAction="#tenRich" prefHeight="30.0" prefWidth="179.0" style="-fx-background-color: #524A7A; -fx-background-radius: 0 30 30 0;" text="10 richest countries" textFill="WHITE">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </Button>
+      <Button fx:id="totalDeathsWorld" layoutY="369.0" mnemonicParsing="false" onAction="#totalDeathsWorld" prefHeight="30.0" prefWidth="179.0" style="-fx-background-color: #524A7A; -fx-background-radius: 0 30 30 0;" text="Total deaths worldwide" textFill="WHITE">
          <font>
             <Font size="14.0" />
          </font>

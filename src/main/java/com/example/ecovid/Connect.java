@@ -73,7 +73,10 @@ public class Connect {
             case "countryName":
                 val = rs.getString(header);
                 break;
-
+            case "Last_updated":
+                val =rs.getDate(header).toString();
+                break;
+            case "rank":
             case "countryRank":
             case "times_visited":
 
@@ -97,6 +100,9 @@ public class Connect {
                 val = valueOf(rs.getDouble(header));
                 break;
             case "max(accumVacc)":
+            case "Total_vaccines":
+            case "Total_Deaths":
+            case "Population":
                 val = valueOf((rs.getLong(header)));
         }
         return val;
