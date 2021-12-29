@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="ECovid:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/ECovid_jar</output-path>
+    <root id="archive" name="ECovid.jar">
+      <element id="module-output" name="ECovid" />
+    </root>
+  </artifact>
+</component>
