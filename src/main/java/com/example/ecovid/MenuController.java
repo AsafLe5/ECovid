@@ -67,14 +67,22 @@ public class MenuController extends Application {
         //link to data display page in fxml
         FXMLLoader loader = new FXMLLoader(getClass().getResource("data-display.fxml"));
         root = loader.load();
+        String schema = myConnection.getSchema();
         DataDisplayController dataDisplayController = loader.getController();
         //query to see which country was updated if it was
+//        String existsquery = "SELECT Country\n" +
+//                "FROM corona_data.from_country_to_id\n" +
+//                "where Country = \'" + countryName + "\'";
         String existsquery = "SELECT Country\n" +
-                "FROM corona_data.from_country_to_id\n" +
+                "FROM "+schema+".from_country_to_id\n" +
                 "where Country = \'" + countryName + "\'";
         //set query
+//        String query =
+//                "Update corona_data.from_country_to_id\n" +
+//                        "set times_visited = " + times + "\n" +
+//                        "where Country = \'" + countryName + "\'";
         String query =
-                "Update corona_data.from_country_to_id\n" +
+                "Update "+schema+".from_country_to_id\n" +
                         "set times_visited = " + times + "\n" +
                         "where Country = \'" + countryName + "\'";
         //display the updated country. If none were, the display will be blank
@@ -108,10 +116,11 @@ public class MenuController extends Application {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("data-display.fxml"));
         root = loader.load();
         DataDisplayController dataDisplayController = loader.getController();
+        String schema = myConnection.getSchema();
         String query =
                 "Select from_country_to_id.country, corona_cases.country_id, sum(New_cases) as totalCases, gdp_usd_per_cap "
                         + System.lineSeparator() +
-                        "From corona_data.corona_cases, corona_data.from_country_to_id, corona_data.gdp_per_country "
+                        "From "+schema+".corona_cases, "+schema+".from_country_to_id, "+schema+".gdp_per_country "
                         + System.lineSeparator() +
                         "where from_country_to_id.COUNTRYID = corona_cases.country_id AND corona_cases.country_id = gdp_per_country.country_id "
                         + System.lineSeparator() +
@@ -162,14 +171,15 @@ public class MenuController extends Application {
     public void covidSpreadMonth(ActionEvent event) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("country_wealth_options_view.fxml"));
         root = loader.load();
+        String schema = myConnection.getSchema();
         CountryWealthOptionsController countryWealthOptionsController = loader.getController();
         String queryPart1 = "select sum(accumCases), w.curMonth, sum(NewCassesPerPop)/20, sum(w.population), w.curYear\n" +
                 "from (select x.id1, from_country_to_id.country, EXTRACT(YEAR FROM x.Dr1) as curYear, x.accumCases , EXTRACT(MONTH FROM x.Dr1) as curMonth, gdp_per_country.rank,\n" +
                 " population_by_country_2020.Population_2020 as population, (x.accumCases/population_by_country_2020.Population_2020)*100 as NewCassesPerPop\n" +
-                "\tfrom corona_data.from_country_to_id, corona_data.gdp_per_country, corona_data.population_by_country_2020, (\n" +
+                "\tfrom "+schema+".from_country_to_id, "+schema+".gdp_per_country, "+schema+".population_by_country_2020, (\n" +
                 "\t\tSelect corona_cases.country_id as id1, New_cases as Nc1,Date_reported as Dr1, sum(New_cases) OVER (PARTITION BY country_id ORDER BY Date_reported) as accumCases\n" +
-                "\t\tFrom corona_data.corona_cases) as x\n" +
-                "\twhere  from_country_to_id.COUNTRYID=x.id1 AND x.id1= gdp_per_country.country_id AND corona_data.population_by_country_2020.country_id = x.id1 AND gdp_per_country.rank ";
+                "\t\tFrom "+schema+".corona_cases) as x\n" +
+                "\twhere  from_country_to_id.COUNTRYID=x.id1 AND x.id1= gdp_per_country.country_id AND "+schema+".population_by_country_2020.country_id = x.id1 AND gdp_per_country.rank ";
         String queryPart2 = "\tgroup by EXTRACT(MONTH FROM x.Dr1),EXTRACT(YEAR FROM x.Dr1), x.id1\n" +
                 "\torder by gdp_per_country.rank) as w\n" +
                 "group by w.curMonth, w.curYear";
@@ -200,7 +210,7 @@ public class MenuController extends Application {
 -- string will go here "AND gdp_per_country.rank"
      */
     public void vaccRateMonth(ActionEvent event) throws IOException {
-
+        String schema = myConnection.getSchema();
         FXMLLoader loader = new FXMLLoader(getClass().getResource("country_wealth_options_view.fxml"));
         root = loader.load();
         CountryWealthOptionsController countryWealthOptionsController = loader.getController();
@@ -208,12 +218,12 @@ public class MenuController extends Application {
                 " from (\n" +
                 "\tselect EXTRACT(YEAR FROM x.Dr1) as curYear,EXTRACT(MONTH FROM x.Dr1) as curMonth, x.accumVacc,\n" +
                 " \t\tpopulation_by_country_2020.Population_2020 as population, (x.accumVacc/population_by_country_2020.Population_2020)*100 as NewVacPerPop\n" +
-                "\tfrom corona_data.from_country_to_id, corona_data.gdp_per_country, corona_data.population_by_country_2020, (\n" +
+                "\tfrom "+schema+".from_country_to_id, "+schema+".gdp_per_country, "+schema+".population_by_country_2020, (\n" +
                 " \t\t\tSelect country_vaccinations.country_id as id1, daily_vaccinations as dV1,Date as Dr1, sum(daily_vaccinations) OVER (PARTITION BY country_id ORDER BY Date) as accumVacc\n" +
-                " \t\t\tFrom corona_data.country_vaccinations) as x\n" +
-                " \twhere  from_country_to_id.COUNTRYID=x.id1 AND x.id1= gdp_per_country.country_id AND corona_data.population_by_country_2020.country_id = x.id1 AND gdp_per_country.rank ";
+                " \t\t\tFrom "+schema+".country_vaccinations) as x\n" +
+                " \twhere  from_country_to_id.COUNTRYID=x.id1 AND x.id1= gdp_per_country.country_id AND "+schema+".population_by_country_2020.country_id = x.id1 AND gdp_per_country.rank ";
         String queryPart2 = " AND EXTRACT(DAY FROM x.Dr1) = (\n" +
-                "Select Max(EXTRACT(DAY FROM country_vaccinations.date)) from corona_data.country_vaccinations where x.id1= country_vaccinations.country_id AND\n" +
+                "Select Max(EXTRACT(DAY FROM country_vaccinations.date)) from "+schema+".country_vaccinations where x.id1= country_vaccinations.country_id AND\n" +
                 "EXTRACT(MONTH FROM country_vaccinations.date) = EXTRACT(MONTH FROM x.Dr1) AND EXTRACT(YEAR FROM country_vaccinations.date) = EXTRACT(YEAR FROM x.Dr1))\n" +
                 "group by EXTRACT(MONTH FROM x.Dr1),EXTRACT(YEAR FROM x.Dr1), x.id1\n" +
                 "order by gdp_per_country.rank) as w\n" +
@@ -248,13 +258,14 @@ public class MenuController extends Application {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("data-display.fxml"));
         root = loader.load();
         DataDisplayController dataDisplayController = loader.getController();
+        String schema = myConnection.getSchema();
         String query =
                 "select x.id1, x.countryName, max(accumVacc), x.population, ((max(accumVacc)/2)/x.population)*100 as vaccinePerPopulation, x.countryRank as countryRank, x.times_visited\n" +
                         "from (\n" +
                         "Select cdcv.country_id as id1, daily_vaccinations as dV1,Date as Dr1, sum(daily_vaccinations) OVER (PARTITION BY cdcv.country_id ORDER BY Date) as accumVacc,\n" +
                         "population_by_country_2020.Population_2020 as population, from_country_to_id.Country as countryName, gdp_per_country.rank as countryRank, from_country_to_id.times_visited as times_visited\n" +
-                        "From corona_data.country_vaccinations as cdcv, corona_data.from_country_to_id, corona_data.population_by_country_2020, corona_data.gdp_per_country\n" +
-                        "where corona_data.from_country_to_id.COUNTRYID=cdcv.country_id AND corona_data.population_by_country_2020.country_id = cdcv.country_id AND cdcv.country_id= gdp_per_country.country_id) as x\n" +
+                        "From "+schema+".country_vaccinations as cdcv, "+schema+".from_country_to_id, "+schema+".population_by_country_2020, "+schema+".gdp_per_country\n" +
+                        "where "+schema+".from_country_to_id.COUNTRYID=cdcv.country_id AND "+schema+".population_by_country_2020.country_id = cdcv.country_id AND cdcv.country_id= gdp_per_country.country_id) as x\n" +
                         "group by x.id1\n" +
                         "order by vaccinePerPopulation desc";
 
@@ -292,13 +303,14 @@ public class MenuController extends Application {
 
     //returns which countries used pfizer vaccine
     public void countryPfizer(ActionEvent event) throws IOException {
+        String schema = myConnection.getSchema();
         //sort by richest countries and show the total amount of sick people there are per country
         FXMLLoader loader = new FXMLLoader(getClass().getResource("data-display.fxml"));
         root = loader.load();
         DataDisplayController dataDisplayController = loader.getController();
         String query =
                 "SELECT country_id, from_country_to_id.Country, vacc_correct\n" +
-                        "FROM corona_data.type_vacc, corona_data.from_country_to_id\n" +
+                        "FROM "+schema+".type_vacc, "+schema+".from_country_to_id\n" +
                         "where type_vacc.country_id = from_country_to_id.COUNTRYID AND vacc_correct = \'Pfizer/BioNTech\'";
 
         dataDisplayController.headers = new ArrayList<String>();
@@ -333,6 +345,7 @@ public class MenuController extends Application {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("data-display.fxml"));
         root = loader.load();
         DataDisplayController dataDisplayController = loader.getController();
+        String schema = myConnection.getSchema();
         String query =
                 "select w.id1, w.countryName,max(w.vaccinePerPopulation), w.population, w.countryRank, w.times_visited\n" +
                         "from (select x.id1 as id1, x.countryName as countryName, max(accumVacc),\n" +
@@ -340,8 +353,8 @@ public class MenuController extends Application {
                         "\tfrom (\n" +
                         "\t\tSelect cdcv.country_id as id1, daily_vaccinations as dV1,Date as Dr1, sum(daily_vaccinations) OVER (PARTITION BY cdcv.country_id ORDER BY Date) as accumVacc,\n" +
                         "\t\t population_by_country_2020.Population_2020 as population, from_country_to_id.Country as countryName, gdp_per_country.rank as countryRank, from_country_to_id.times_visited as times_visitedS\n" +
-                        "\t\tFrom corona_data.country_vaccinations as cdcv, corona_data.from_country_to_id, corona_data.population_by_country_2020, corona_data.gdp_per_country\n" +
-                        "\t\twhere corona_data.from_country_to_id.COUNTRYID=cdcv.country_id AND corona_data.population_by_country_2020.country_id = cdcv.country_id AND cdcv.country_id= gdp_per_country.country_id) as x \n" +
+                        "\t\tFrom "+schema+".country_vaccinations as cdcv, "+schema+".from_country_to_id, "+schema+".population_by_country_2020, "+schema+".gdp_per_country\n" +
+                        "\t\twhere "+schema+".from_country_to_id.COUNTRYID=cdcv.country_id AND "+schema+".population_by_country_2020.country_id = cdcv.country_id AND cdcv.country_id= gdp_per_country.country_id) as x \n" +
                         "\tgroup by x.id1\n" +
                         "\torder by vaccinePerPopulation desc) as w\n" +
                         "where countryRank<30";
@@ -390,9 +403,10 @@ public class MenuController extends Application {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("data-display.fxml"));
         root = loader.load();
         DataDisplayController dataDisplayController = loader.getController();
+        String schema = myConnection.getSchema();
         String query =
                 "SELECT Country\n" +
-                        "FROM corona_data.from_country_to_id\n" +
+                        "FROM "+schema+".from_country_to_id\n" +
                         "where times_visited = 0";
         //these are the titles of each colomn that will be returned from the query
         dataDisplayController.headers = new ArrayList<String>();
@@ -425,9 +439,10 @@ public class MenuController extends Application {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("data-display.fxml"));
         root = loader.load();
         DataDisplayController dataDisplayController = loader.getController();
+        String schema = myConnection.getSchema();
         String query =
                 "SELECT Country, times_visited\n" +
-                        "FROM corona_data.from_country_to_id";
+                        "FROM "+schema+".from_country_to_id";
         //these are the titles of each colomn that will be returned from the query
         dataDisplayController.headers = new ArrayList<String>();
         dataDisplayController.headers.add("Country");
@@ -460,14 +475,15 @@ public class MenuController extends Application {
 
         FXMLLoader loader = new FXMLLoader(getClass().getResource("data-display.fxml"));
         root = loader.load();
+        String schema = myConnection.getSchema();
         DataDisplayController dataDisplayController = loader.getController();
         String query =
                 "select x.id1, x.countryName, max(accumVacc), x.population, ((max(accumVacc)/2)/x.population)*100 as vaccinePerPopulation, x.countryRank as countryRank, x.times_visited\n"+
         "from (\n"+
                 "Select cdcv.country_id as id1, daily_vaccinations as dV1,Date as Dr1, sum(daily_vaccinations) OVER (PARTITION BY cdcv.country_id ORDER BY Date) as accumVacc,"+
                 "population_by_country_2020.Population_2020 as population, from_country_to_id.Country as countryName, gdp_per_country.rank as countryRank, from_country_to_id.times_visited as times_visited\n"+
-                "From corona_data.country_vaccinations as cdcv, corona_data.from_country_to_id, corona_data.population_by_country_2020, corona_data.gdp_per_country\n"+
-                "where corona_data.from_country_to_id.COUNTRYID=cdcv.country_id AND corona_data.population_by_country_2020.country_id = cdcv.country_id AND cdcv.country_id= gdp_per_country.country_id) as x\n"+
+                "From "+schema+".country_vaccinations as cdcv, "+schema+".from_country_to_id, "+schema+".population_by_country_2020, "+schema+".gdp_per_country\n"+
+                "where "+schema+".from_country_to_id.COUNTRYID=cdcv.country_id AND "+schema+".population_by_country_2020.country_id = cdcv.country_id AND cdcv.country_id= gdp_per_country.country_id) as x\n"+
         "group by x.id1\n"+
         "order by Rand(),vaccinePerPopulation desc\n"+
         "Limit 1";
@@ -512,9 +528,10 @@ public class MenuController extends Application {
 
         FXMLLoader loader = new FXMLLoader(getClass().getResource("data-display.fxml"));
         root = loader.load();
+        String schema = myConnection.getSchema();
         DataDisplayController dataDisplayController = loader.getController();
         String query = "select sum(daily_vaccinations) as Total_vaccines\n" +
-                "from corona_data.country_vaccinations";
+                "from "+schema+".country_vaccinations";
         //these are the titles of each colomn that will be returned from the query
         dataDisplayController.headers = new ArrayList<String>();
         dataDisplayController.headers.add("Total_vaccines");
@@ -544,9 +561,10 @@ public class MenuController extends Application {
 
         FXMLLoader loader = new FXMLLoader(getClass().getResource("data-display.fxml"));
         root = loader.load();
+        String schema = myConnection.getSchema();
         DataDisplayController dataDisplayController = loader.getController();
         String query = "select sum(New_deaths) as Total_Deaths\n" +
-                "from corona_data.corona_cases";
+                "from "+schema+".corona_cases";
         //these are the titles of each colomn that will be returned from the query
         dataDisplayController.headers = new ArrayList<String>();
         dataDisplayController.headers.add("Total_Deaths");
@@ -576,9 +594,10 @@ public class MenuController extends Application {
 
         FXMLLoader loader = new FXMLLoader(getClass().getResource("data-display.fxml"));
         root = loader.load();
+        String schema = myConnection.getSchema();
         DataDisplayController dataDisplayController = loader.getController();
         String query = "SELECT  from_country_to_id.Country, gdp_per_country.rank\n" +
-                "FROM corona_data.from_country_to_id, corona_data.gdp_per_country\n" +
+                "FROM "+schema+".from_country_to_id, "+schema+".gdp_per_country\n" +
                 "where gdp_per_country.country_id = from_country_to_id.COUNTRYID\n" +
                 "order by gdp_per_country.rank\n" +
                 "Limit 10";
@@ -613,9 +632,10 @@ public class MenuController extends Application {
 
         FXMLLoader loader = new FXMLLoader(getClass().getResource("data-display.fxml"));
         root = loader.load();
+        String schema = myConnection.getSchema();
         DataDisplayController dataDisplayController = loader.getController();
         String query = "SELECT  from_country_to_id.Country, population_by_country_2020.Population_2020 as Population\n" +
-                "FROM corona_data.from_country_to_id, corona_data.population_by_country_2020\n" +
+                "FROM "+schema+".from_country_to_id, "+schema+".population_by_country_2020\n" +
                 "where population_by_country_2020.country_id = from_country_to_id.COUNTRYID\n" +
                 "order by Population desc\n" +
                 "Limit 10";
@@ -650,9 +670,10 @@ public class MenuController extends Application {
 
         FXMLLoader loader = new FXMLLoader(getClass().getResource("data-display.fxml"));
         root = loader.load();
+        String schema = myConnection.getSchema();
         DataDisplayController dataDisplayController = loader.getController();
         String query = "select max(country_vaccinations.date) as Last_updated\n" +
-                "from corona_data.country_vaccinations";
+                "from "+schema+".country_vaccinations";
         //these are the titles of each colomn that will be returned from the query
         dataDisplayController.headers = new ArrayList<String>();
         dataDisplayController.headers.add("Last_updated");

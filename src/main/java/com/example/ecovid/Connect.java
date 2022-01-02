@@ -16,8 +16,11 @@ import static java.lang.String.valueOf;
 
 
 public class Connect {
+    String schema ="";
     Connection conn; // DB connection
-
+    public String getSchema() {
+        return schema;
+    }
     public boolean openConnection() {
         // loading the driver
         try {
@@ -30,7 +33,7 @@ public class Connect {
         System.out.print("Trying to connect... ");
         String host="";
         String port="";
-        String schema="";
+//        String schema="";
         String user="";
         String password="";
         try {
@@ -40,7 +43,7 @@ public class Connect {
             // creating the connection
             host = sc.next().toString();
             port = sc.next().toString();
-            schema = sc.next().toString();
+            this.schema = sc.next().toString();
             user = sc.next().toString();
             password = sc.next().toString();
             sc.close();
